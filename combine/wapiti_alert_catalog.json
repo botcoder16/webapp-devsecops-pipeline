@@ -1,4 +1,4 @@
-{
+[
   { "id": 1, "name": "Backup file" },
   { "id": 2, "name": "Weak credentials" },
   { "id": 3, "name": "CRLF Injection" },
@@ -37,4 +37,4 @@
   { "id": 36, "name": "Fingerprint web technology" },
   { "id": 37, "name": "HTTP Methods" },
   { "id": 38, "name": "TLS/SSL misconfigurations" }
-}
+]
