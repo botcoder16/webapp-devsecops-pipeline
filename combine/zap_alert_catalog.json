@@ -1,0 +1,2370 @@
+{
+    "0": {
+        "name": "Directory Browsing",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Active",
+        "cwe": "548",
+        "wasc": "48"
+    },
+    "2": {
+        "name": "Private IP Disclosure",
+        "status": "release",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "497",
+        "wasc": "13"
+    },
+    "3": {
+        "name": "Session ID in URL Rewrite",
+        "status": "release",
+        "risk": "",
+        "type": "Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "3-1": {
+        "name": "Session ID in URL Rewrite",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "598",
+        "wasc": "13"
+    },
+    "3-2": {
+        "name": "Session ID in URL Rewrite",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "598",
+        "wasc": "13"
+    },
+    "3-3": {
+        "name": "Referer Exposes Session ID",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "598",
+        "wasc": "13"
+    },
+    "6": {
+        "name": "Path Traversal",
+        "status": "release",
+        "risk": "",
+        "type": "Active",
+        "cwe": "",
+        "wasc": ""
+    },
+    "6-1": {
+        "name": "Path Traversal",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "22",
+        "wasc": "33"
+    },
+    "6-2": {
+        "name": "Path Traversal",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "22",
+        "wasc": "33"
+    },
+    "6-3": {
+        "name": "Path Traversal",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "22",
+        "wasc": "33"
+    },
+    "6-4": {
+        "name": "Path Traversal",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "22",
+        "wasc": "33"
+    },
+    "6-5": {
+        "name": "Path Traversal",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "22",
+        "wasc": "33"
+    },
+    "7": {
+        "name": "Remote File Inclusion",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "98",
+        "wasc": "5"
+    },
+    "41": {
+        "name": "Source Code Disclosure - Git",
+        "status": "beta",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "541",
+        "wasc": "34"
+    },
+    "42": {
+        "name": "Source Code Disclosure - SVN",
+        "status": "beta",
+        "risk": "Medium",
+        "type": "Active",
+        "cwe": "541",
+        "wasc": "34"
+    },
+    "43": {
+        "name": "Source Code Disclosure - File Inclusion",
+        "status": "beta",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "541",
+        "wasc": "33"
+    },
+    "10003": {
+        "name": "Vulnerable JS Library",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "1395",
+        "wasc": ""
+    },
+    "10004": {
+        "name": "Tech Detection Passive Scanner",
+        "status": "release",
+        "risk": "Informational",
+        "type": "Tool",
+        "cwe": "",
+        "wasc": "13"
+    },
+    "10009": {
+        "name": "In Page Banner Information Leak",
+        "status": "beta",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "497",
+        "wasc": "13"
+    },
+    "10010": {
+        "name": "Cookie No HttpOnly Flag",
+        "status": "release",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "1004",
+        "wasc": "13"
+    },
+    "10011": {
+        "name": "Cookie Without Secure Flag",
+        "status": "release",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "614",
+        "wasc": "13"
+    },
+    "10015": {
+        "name": "Re-examine Cache-control Directives",
+        "status": "release",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "525",
+        "wasc": "13"
+    },
+    "10016": {
+        "name": "Web Browser XSS Protection Not Enabled",
+        "status": "deprecated",
+        "risk": "",
+        "type": "Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "10017": {
+        "name": "Cross-Domain JavaScript Source File Inclusion",
+        "status": "release",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "829",
+        "wasc": "15"
+    },
+    "10019": {
+        "name": "Content-Type Header Missing",
+        "status": "release",
+        "risk": "",
+        "type": "Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "10019-1": {
+        "name": "Content-Type Header Missing",
+        "status": "release",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "345",
+        "wasc": "12"
+    },
+    "10019-2": {
+        "name": "Content-Type Header Empty",
+        "status": "release",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "345",
+        "wasc": "12"
+    },
+    "10020": {
+        "name": "Anti-clickjacking Header",
+        "status": "release",
+        "risk": "",
+        "type": "Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "10020-1": {
+        "name": "Missing Anti-clickjacking Header",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "1021",
+        "wasc": "15"
+    },
+    "10020-2": {
+        "name": "Multiple X-Frame-Options Header Entries",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "1021",
+        "wasc": "15"
+    },
+    "10020-3": {
+        "name": "X-Frame-Options Defined via META (Non-compliant with Spec)",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "1021",
+        "wasc": "15"
+    },
+    "10020-4": {
+        "name": "X-Frame-Options Setting Malformed",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "1021",
+        "wasc": "15"
+    },
+    "10021": {
+        "name": "X-Content-Type-Options Header Missing",
+        "status": "release",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "693",
+        "wasc": "15"
+    },
+    "10023": {
+        "name": "Information Disclosure - Debug Error Messages",
+        "status": "release",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "1295",
+        "wasc": "13"
+    },
+    "10024": {
+        "name": "Information Disclosure - Sensitive Information in URL",
+        "status": "release",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "598",
+        "wasc": "13"
+    },
+    "10025": {
+        "name": "Information Disclosure - Sensitive Information in HTTP Referrer Header",
+        "status": "release",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "598",
+        "wasc": "13"
+    },
+    "10026": {
+        "name": "HTTP Parameter Override",
+        "status": "beta",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "20",
+        "wasc": "20"
+    },
+    "10027": {
+        "name": "Information Disclosure - Suspicious Comments",
+        "status": "release",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "615",
+        "wasc": "13"
+    },
+    "10028": {
+        "name": "Open Redirect",
+        "status": "release",
+        "risk": "High",
+        "type": "Passive",
+        "cwe": "601",
+        "wasc": "38"
+    },
+    "10029": {
+        "name": "Cookie Poisoning",
+        "status": "release",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "565",
+        "wasc": "20"
+    },
+    "10030": {
+        "name": "User Controllable Charset",
+        "status": "release",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "20",
+        "wasc": "20"
+    },
+    "10031": {
+        "name": "User Controllable HTML Element Attribute (Potential XSS)",
+        "status": "release",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "20",
+        "wasc": "20"
+    },
+    "10032": {
+        "name": "Viewstate",
+        "status": "release",
+        "risk": "",
+        "type": "Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "10032-1": {
+        "name": "Potential IP Addresses Found in the Viewstate",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "642",
+        "wasc": "14"
+    },
+    "10032-2": {
+        "name": "Emails Found in the Viewstate",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "642",
+        "wasc": "14"
+    },
+    "10032-3": {
+        "name": "Old Asp.Net Version in Use",
+        "status": "release",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "642",
+        "wasc": "14"
+    },
+    "10032-4": {
+        "name": "Viewstate without MAC Signature (Unsure)",
+        "status": "release",
+        "risk": "High",
+        "type": "Passive",
+        "cwe": "642",
+        "wasc": "14"
+    },
+    "10032-5": {
+        "name": "Viewstate without MAC Signature (Sure)",
+        "status": "release",
+        "risk": "High",
+        "type": "Passive",
+        "cwe": "642",
+        "wasc": "14"
+    },
+    "10032-6": {
+        "name": "Split Viewstate in Use",
+        "status": "release",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "642",
+        "wasc": "14"
+    },
+    "10033": {
+        "name": "Directory Browsing",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "548",
+        "wasc": "16"
+    },
+    "10034": {
+        "name": "Heartbleed OpenSSL Vulnerability (Indicative)",
+        "status": "release",
+        "risk": "High",
+        "type": "Passive",
+        "cwe": "119",
+        "wasc": "20"
+    },
+    "10035": {
+        "name": "Strict-Transport-Security Header",
+        "status": "release",
+        "risk": "",
+        "type": "Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "10035-1": {
+        "name": "Strict-Transport-Security Header Not Set",
+        "status": "release",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "319",
+        "wasc": "15"
+    },
+    "10035-2": {
+        "name": "Strict-Transport-Security Disabled",
+        "status": "release",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "319",
+        "wasc": "15"
+    },
+    "10035-3": {
+        "name": "Strict-Transport-Security Multiple Header Entries (Non-compliant with Spec)",
+        "status": "release",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "319",
+        "wasc": "15"
+    },
+    "10035-4": {
+        "name": "Strict-Transport-Security Header on Plain HTTP Response",
+        "status": "release",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "319",
+        "wasc": "15"
+    },
+    "10035-5": {
+        "name": "Strict-Transport-Security Missing Max-Age (Non-compliant with Spec)",
+        "status": "release",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "319",
+        "wasc": "15"
+    },
+    "10035-6": {
+        "name": "Strict-Transport-Security Defined via META (Non-compliant with Spec)",
+        "status": "release",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "319",
+        "wasc": "15"
+    },
+    "10035-7": {
+        "name": "Strict-Transport-Security Max-Age Malformed (Non-compliant with Spec)",
+        "status": "release",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "319",
+        "wasc": "15"
+    },
+    "10035-8": {
+        "name": "Strict-Transport-Security Malformed Content (Non-compliant with Spec)",
+        "status": "release",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "319",
+        "wasc": "15"
+    },
+    "10036": {
+        "name": "HTTP Server Response Header",
+        "status": "release",
+        "risk": "",
+        "type": "Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "10036-1": {
+        "name": "Server Leaks its Webserver Application via \"Server\" HTTP Response Header Field",
+        "status": "release",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "497",
+        "wasc": "13"
+    },
+    "10036-2": {
+        "name": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+        "status": "release",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "497",
+        "wasc": "13"
+    },
+    "10037": {
+        "name": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+        "status": "release",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "497",
+        "wasc": "13"
+    },
+    "10038": {
+        "name": "Content Security Policy (CSP) Header Not Set",
+        "status": "release",
+        "risk": "",
+        "type": "Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "10038-1": {
+        "name": "Content Security Policy (CSP) Header Not Set",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "693",
+        "wasc": "15"
+    },
+    "10038-2": {
+        "name": "Obsolete Content Security Policy (CSP) Header Found",
+        "status": "release",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "693",
+        "wasc": "15"
+    },
+    "10038-3": {
+        "name": "Content Security Policy (CSP) Report-Only Header Found",
+        "status": "release",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "693",
+        "wasc": "15"
+    },
+    "10039": {
+        "name": "X-Backend-Server Header Information Leak",
+        "status": "release",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "497",
+        "wasc": "13"
+    },
+    "10040": {
+        "name": "Secure Pages Include Mixed Content",
+        "status": "release",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "311",
+        "wasc": "4"
+    },
+    "10041": {
+        "name": "HTTP to HTTPS Insecure Transition in Form Post",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "319",
+        "wasc": "15"
+    },
+    "10042": {
+        "name": "HTTPS to HTTP Insecure Transition in Form Post",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "319",
+        "wasc": "15"
+    },
+    "10043": {
+        "name": "User Controllable JavaScript Event (XSS)",
+        "status": "release",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "20",
+        "wasc": "20"
+    },
+    "10044": {
+        "name": "Big Redirect Detected (Potential Sensitive Information Leak)",
+        "status": "release",
+        "risk": "",
+        "type": "Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "10044-1": {
+        "name": "Big Redirect Detected (Potential Sensitive Information Leak)",
+        "status": "release",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "201",
+        "wasc": "13"
+    },
+    "10044-2": {
+        "name": "Multiple HREFs Redirect Detected (Potential Sensitive Information Leak)",
+        "status": "release",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "201",
+        "wasc": "13"
+    },
+    "10045": {
+        "name": "Source Code Disclosure - /WEB-INF Folder",
+        "status": "release",
+        "risk": "",
+        "type": "Active",
+        "cwe": "",
+        "wasc": ""
+    },
+    "10045-1": {
+        "name": "Source Code Disclosure - /WEB-INF Folder",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "541",
+        "wasc": "34"
+    },
+    "10045-2": {
+        "name": "Properties File Disclosure - /WEB-INF folder",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "541",
+        "wasc": "34"
+    },
+    "10046": {
+        "name": "Insecure Component",
+        "status": "deprecated",
+        "risk": "",
+        "type": "Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "10047": {
+        "name": "HTTPS Content Available via HTTP",
+        "status": "beta",
+        "risk": "Low",
+        "type": "Active",
+        "cwe": "311",
+        "wasc": "4"
+    },
+    "10048": {
+        "name": "Remote Code Execution - Shell Shock",
+        "status": "beta",
+        "risk": "",
+        "type": "Active",
+        "cwe": "",
+        "wasc": ""
+    },
+    "10048-1": {
+        "name": "Remote Code Execution - Shell Shock",
+        "status": "beta",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "78",
+        "wasc": "31"
+    },
+    "10048-2": {
+        "name": "Remote Code Execution - Shell Shock",
+        "status": "beta",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "78",
+        "wasc": "31"
+    },
+    "10049": {
+        "name": "Content Cacheability",
+        "status": "beta",
+        "risk": "",
+        "type": "Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "10049-1": {
+        "name": "Non-Storable Content",
+        "status": "beta",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "524",
+        "wasc": "13"
+    },
+    "10049-2": {
+        "name": "Storable but Non-Cacheable Content",
+        "status": "beta",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "524",
+        "wasc": "13"
+    },
+    "10049-3": {
+        "name": "Storable and Cacheable Content",
+        "status": "beta",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "524",
+        "wasc": "13"
+    },
+    "10050": {
+        "name": "Retrieved from Cache",
+        "status": "release",
+        "risk": "",
+        "type": "Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "10050-1": {
+        "name": "Retrieved from Cache",
+        "status": "release",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "10050-2": {
+        "name": "Retrieved from Cache",
+        "status": "release",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "10051": {
+        "name": "Relative Path Confusion",
+        "status": "beta",
+        "risk": "Medium",
+        "type": "Active",
+        "cwe": "20",
+        "wasc": "20"
+    },
+    "10052": {
+        "name": "X-ChromeLogger-Data (XCOLD) Header Information Leak",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "532",
+        "wasc": "13"
+    },
+    "10053": {
+        "name": "Apache Range Header DoS (CVE-2011-3192)",
+        "status": "deprecated",
+        "risk": "Medium",
+        "type": "Active",
+        "cwe": "400",
+        "wasc": "10"
+    },
+    "10054": {
+        "name": "Cookie without SameSite Attribute",
+        "status": "release",
+        "risk": "",
+        "type": "Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "10054-1": {
+        "name": "Cookie without SameSite Attribute",
+        "status": "release",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "1275",
+        "wasc": "13"
+    },
+    "10054-2": {
+        "name": "Cookie with SameSite Attribute None",
+        "status": "release",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "1275",
+        "wasc": "13"
+    },
+    "10054-3": {
+        "name": "Cookie with Invalid SameSite Attribute",
+        "status": "release",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "1275",
+        "wasc": "13"
+    },
+    "10055": {
+        "name": "CSP",
+        "status": "release",
+        "risk": "",
+        "type": "Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "10055-1": {
+        "name": "CSP: X-Content-Security-Policy",
+        "status": "release",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "693",
+        "wasc": "15"
+    },
+    "10055-2": {
+        "name": "CSP: X-WebKit-CSP",
+        "status": "release",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "693",
+        "wasc": "15"
+    },
+    "10055-3": {
+        "name": "CSP: Notices",
+        "status": "release",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "693",
+        "wasc": "15"
+    },
+    "10055-4": {
+        "name": "CSP: Wildcard Directive",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "693",
+        "wasc": "15"
+    },
+    "10055-5": {
+        "name": "CSP: script-src unsafe-inline",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "693",
+        "wasc": "15"
+    },
+    "10055-6": {
+        "name": "CSP: style-src unsafe-inline",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "693",
+        "wasc": "15"
+    },
+    "10055-7": {
+        "name": "CSP: script-src unsafe-hashes",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "693",
+        "wasc": "15"
+    },
+    "10055-8": {
+        "name": "CSP: style-src unsafe-hashes",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "693",
+        "wasc": "15"
+    },
+    "10055-9": {
+        "name": "CSP: Malformed Policy (Non-ASCII)",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "693",
+        "wasc": "15"
+    },
+    "10055-10": {
+        "name": "CSP: script-src unsafe-eval",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "693",
+        "wasc": "15"
+    },
+    "10055-11": {
+        "name": "CSP: Meta Policy Invalid Directive",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "693",
+        "wasc": "15"
+    },
+    "10055-12": {
+        "name": "CSP: Header & Meta",
+        "status": "release",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "693",
+        "wasc": "15"
+    },
+    "10055-13": {
+        "name": "CSP: Failure to Define Directive with No Fallback",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "693",
+        "wasc": "15"
+    },
+    "10056": {
+        "name": "X-Debug-Token Information Leak",
+        "status": "release",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "489",
+        "wasc": "13"
+    },
+    "10057": {
+        "name": "Username Hash Found",
+        "status": "release",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "284",
+        "wasc": "2"
+    },
+    "10058": {
+        "name": "GET for POST",
+        "status": "release",
+        "risk": "Informational",
+        "type": "Active",
+        "cwe": "16",
+        "wasc": "20"
+    },
+    "10061": {
+        "name": "X-AspNet-Version Response Header",
+        "status": "release",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "933",
+        "wasc": "14"
+    },
+    "10062": {
+        "name": "PII Disclosure",
+        "status": "release",
+        "risk": "High",
+        "type": "Passive",
+        "cwe": "359",
+        "wasc": "13"
+    },
+    "10063": {
+        "name": "Permissions Policy Header Not Set",
+        "status": "beta",
+        "risk": "",
+        "type": "Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "10063-1": {
+        "name": "Permissions Policy Header Not Set",
+        "status": "beta",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "693",
+        "wasc": "15"
+    },
+    "10063-2": {
+        "name": "Deprecated Feature Policy Header Set",
+        "status": "beta",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "16",
+        "wasc": "15"
+    },
+    "10070": {
+        "name": "Use of SAML",
+        "status": "alpha",
+        "risk": "",
+        "type": "Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "10094": {
+        "name": "Base64 Disclosure",
+        "status": "alpha",
+        "risk": "",
+        "type": "Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "10094-1": {
+        "name": "ASP.NET ViewState Disclosure",
+        "status": "alpha",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "319",
+        "wasc": "13"
+    },
+    "10094-2": {
+        "name": "ASP.NET ViewState Integrity",
+        "status": "alpha",
+        "risk": "High",
+        "type": "Passive",
+        "cwe": "642",
+        "wasc": "13"
+    },
+    "10094-3": {
+        "name": "Base64 Disclosure",
+        "status": "alpha",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "319",
+        "wasc": "13"
+    },
+    "10095": {
+        "name": "Backup File Disclosure",
+        "status": "beta",
+        "risk": "Medium",
+        "type": "Active",
+        "cwe": "530",
+        "wasc": "34"
+    },
+    "10096": {
+        "name": "Timestamp Disclosure - Unix",
+        "status": "release",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "497",
+        "wasc": "13"
+    },
+    "10097": {
+        "name": "Hash Disclosure - MD4 / MD5",
+        "status": "release",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "497",
+        "wasc": "13"
+    },
+    "10098": {
+        "name": "Cross-Domain Misconfiguration",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "264",
+        "wasc": "14"
+    },
+    "10099": {
+        "name": "Source Code Disclosure - PHP",
+        "status": "beta",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "540",
+        "wasc": "13"
+    },
+    "10101": {
+        "name": "Access Control Issue - Improper Authentication",
+        "status": "alpha",
+        "risk": "High",
+        "type": "Tool",
+        "cwe": "287",
+        "wasc": "1"
+    },
+    "10102": {
+        "name": "Access Control Issue - Improper Authorization",
+        "status": "alpha",
+        "risk": "High",
+        "type": "Tool",
+        "cwe": "205",
+        "wasc": "2"
+    },
+    "10103": {
+        "name": "Image Exposes Location or Privacy Data",
+        "status": "beta",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "200",
+        "wasc": "13"
+    },
+    "10104": {
+        "name": "User Agent Fuzzer",
+        "status": "release",
+        "risk": "Informational",
+        "type": "Active",
+        "cwe": "",
+        "wasc": ""
+    },
+    "10105": {
+        "name": "Weak Authentication Method",
+        "status": "release",
+        "risk": "",
+        "type": "Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "10105-1": {
+        "name": "Authentication Credentials Captured",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "287",
+        "wasc": "1"
+    },
+    "10105-2": {
+        "name": "Weak Authentication Method",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "326",
+        "wasc": "4"
+    },
+    "10106": {
+        "name": "HTTP Only Site",
+        "status": "beta",
+        "risk": "Medium",
+        "type": "Active",
+        "cwe": "311",
+        "wasc": "4"
+    },
+    "10107": {
+        "name": "Httpoxy - Proxy Header Misuse",
+        "status": "beta",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "20",
+        "wasc": "20"
+    },
+    "10108": {
+        "name": "Reverse Tabnabbing",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "10109": {
+        "name": "Modern Web Application",
+        "status": "release",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "10110": {
+        "name": "Dangerous JS Functions",
+        "status": "beta",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "749",
+        "wasc": ""
+    },
+    "10111": {
+        "name": "Authentication Request Identified",
+        "status": "beta",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "10112": {
+        "name": "Session Management Response Identified",
+        "status": "beta",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "10113": {
+        "name": "Verification Request Identified",
+        "status": "beta",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "10115": {
+        "name": "Script Served From Malicious Domain (polyfill)",
+        "status": "release",
+        "risk": "",
+        "type": "Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "10115-1": {
+        "name": "Script Served From Malicious Domain (polyfill)",
+        "status": "release",
+        "risk": "High",
+        "type": "Passive",
+        "cwe": "829",
+        "wasc": "15"
+    },
+    "10115-2": {
+        "name": "Script Served From Malicious Domain (polyfill)",
+        "status": "release",
+        "risk": "High",
+        "type": "Passive",
+        "cwe": "829",
+        "wasc": "15"
+    },
+    "10202": {
+        "name": "Absence of Anti-CSRF Tokens",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "352",
+        "wasc": "9"
+    },
+    "20012": {
+        "name": "Anti-CSRF Tokens Check",
+        "status": "beta",
+        "risk": "Medium",
+        "type": "Active",
+        "cwe": "352",
+        "wasc": "9"
+    },
+    "20014": {
+        "name": "HTTP Parameter Pollution",
+        "status": "beta",
+        "risk": "Informational",
+        "type": "Active",
+        "cwe": "20",
+        "wasc": "20"
+    },
+    "20015": {
+        "name": "Heartbleed OpenSSL Vulnerability",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "119",
+        "wasc": "20"
+    },
+    "20016": {
+        "name": "Cross-Domain Misconfiguration",
+        "status": "beta",
+        "risk": "",
+        "type": "Active",
+        "cwe": "",
+        "wasc": ""
+    },
+    "20016-1": {
+        "name": "Cross-Domain Misconfiguration - Adobe - Read",
+        "status": "beta",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "264",
+        "wasc": "14"
+    },
+    "20016-2": {
+        "name": "Cross-Domain Misconfiguration - Adobe - Send",
+        "status": "beta",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "264",
+        "wasc": "14"
+    },
+    "20016-3": {
+        "name": "Cross-Domain Misconfiguration - Silverlight",
+        "status": "beta",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "264",
+        "wasc": "14"
+    },
+    "20017": {
+        "name": "Source Code Disclosure - CVE-2012-1823",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "20",
+        "wasc": "20"
+    },
+    "20018": {
+        "name": "Remote Code Execution - CVE-2012-1823",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "20",
+        "wasc": "20"
+    },
+    "20019": {
+        "name": "External Redirect",
+        "status": "release",
+        "risk": "",
+        "type": "Active",
+        "cwe": "",
+        "wasc": ""
+    },
+    "20019-1": {
+        "name": "External Redirect",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "601",
+        "wasc": "38"
+    },
+    "20019-2": {
+        "name": "External Redirect",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "601",
+        "wasc": "38"
+    },
+    "20019-3": {
+        "name": "External Redirect",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "601",
+        "wasc": "38"
+    },
+    "20019-4": {
+        "name": "External Redirect",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "601",
+        "wasc": "38"
+    },
+    "30001": {
+        "name": "Buffer Overflow",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Active",
+        "cwe": "120",
+        "wasc": "7"
+    },
+    "30002": {
+        "name": "Format String Error",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Active",
+        "cwe": "134",
+        "wasc": "6"
+    },
+    "30003": {
+        "name": "Integer Overflow Error",
+        "status": "beta",
+        "risk": "Medium",
+        "type": "Active",
+        "cwe": "190",
+        "wasc": "3"
+    },
+    "40003": {
+        "name": "CRLF Injection",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Active",
+        "cwe": "113",
+        "wasc": "25"
+    },
+    "40008": {
+        "name": "Parameter Tampering",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Active",
+        "cwe": "472",
+        "wasc": "20"
+    },
+    "40009": {
+        "name": "Server Side Include",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "97",
+        "wasc": "31"
+    },
+    "40012": {
+        "name": "Cross Site Scripting (Reflected)",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "79",
+        "wasc": "8"
+    },
+    "40013": {
+        "name": "Session Fixation",
+        "status": "beta",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "384",
+        "wasc": "37"
+    },
+    "40014": {
+        "name": "Cross Site Scripting (Persistent)",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "79",
+        "wasc": "8"
+    },
+    "40015": {
+        "name": "LDAP Injection",
+        "status": "alpha",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "90",
+        "wasc": "29"
+    },
+    "40016": {
+        "name": "Cross Site Scripting (Persistent) - Prime",
+        "status": "release",
+        "risk": "Informational",
+        "type": "Active",
+        "cwe": "79",
+        "wasc": "8"
+    },
+    "40017": {
+        "name": "Cross Site Scripting (Persistent) - Spider",
+        "status": "release",
+        "risk": "Informational",
+        "type": "Active",
+        "cwe": "79",
+        "wasc": "8"
+    },
+    "40018": {
+        "name": "SQL Injection",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "89",
+        "wasc": "19"
+    },
+    "40019": {
+        "name": "SQL Injection - MySQL",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "89",
+        "wasc": "19"
+    },
+    "40020": {
+        "name": "SQL Injection - Hypersonic SQL",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "89",
+        "wasc": "19"
+    },
+    "40021": {
+        "name": "SQL Injection - Oracle",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "89",
+        "wasc": "19"
+    },
+    "40022": {
+        "name": "SQL Injection - PostgreSQL",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "89",
+        "wasc": "19"
+    },
+    "40023": {
+        "name": "Possible Username Enumeration",
+        "status": "beta",
+        "risk": "Informational",
+        "type": "Active",
+        "cwe": "204",
+        "wasc": "13"
+    },
+    "40024": {
+        "name": "SQL Injection - SQLite",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "89",
+        "wasc": "19"
+    },
+    "40025": {
+        "name": "Proxy Disclosure",
+        "status": "beta",
+        "risk": "Medium",
+        "type": "Active",
+        "cwe": "204",
+        "wasc": "45"
+    },
+    "40026": {
+        "name": "Cross Site Scripting (DOM Based)",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "79",
+        "wasc": "8"
+    },
+    "40027": {
+        "name": "SQL Injection - MsSQL",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "89",
+        "wasc": "19"
+    },
+    "40028": {
+        "name": "ELMAH Information Leak",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Active",
+        "cwe": "94",
+        "wasc": "14"
+    },
+    "40029": {
+        "name": "Trace.axd Information Leak",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Active",
+        "cwe": "215",
+        "wasc": "13"
+    },
+    "40031": {
+        "name": "Out of Band XSS",
+        "status": "beta",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "79",
+        "wasc": "8"
+    },
+    "40032": {
+        "name": ".htaccess Information Leak",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Active",
+        "cwe": "94",
+        "wasc": "14"
+    },
+    "40033": {
+        "name": "NoSQL Injection - MongoDB",
+        "status": "alpha",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "943",
+        "wasc": "19"
+    },
+    "40034": {
+        "name": ".env Information Leak",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Active",
+        "cwe": "215",
+        "wasc": "13"
+    },
+    "40035": {
+        "name": "Hidden File Found",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Active",
+        "cwe": "538",
+        "wasc": "13"
+    },
+    "40036": {
+        "name": "JWT Scan Rule",
+        "status": "alpha",
+        "risk": "Medium",
+        "type": "Active",
+        "cwe": "",
+        "wasc": ""
+    },
+    "40038": {
+        "name": "Bypassing 403",
+        "status": "beta",
+        "risk": "Medium",
+        "type": "Active",
+        "cwe": "",
+        "wasc": ""
+    },
+    "40039": {
+        "name": "Web Cache Deception",
+        "status": "alpha",
+        "risk": "Medium",
+        "type": "Active",
+        "cwe": "",
+        "wasc": ""
+    },
+    "40040": {
+        "name": "CORS Header",
+        "status": "beta",
+        "risk": "",
+        "type": "Active",
+        "cwe": "",
+        "wasc": ""
+    },
+    "40040-1": {
+        "name": "CORS Header",
+        "status": "beta",
+        "risk": "Informational",
+        "type": "Active",
+        "cwe": "942",
+        "wasc": "14"
+    },
+    "40040-2": {
+        "name": "CORS Misconfiguration",
+        "status": "beta",
+        "risk": "Medium",
+        "type": "Active",
+        "cwe": "942",
+        "wasc": "14"
+    },
+    "40040-3": {
+        "name": "CORS Misconfiguration",
+        "status": "beta",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "942",
+        "wasc": "14"
+    },
+    "40041": {
+        "name": "File Upload",
+        "status": "alpha",
+        "risk": "Medium",
+        "type": "Active",
+        "cwe": "",
+        "wasc": ""
+    },
+    "40042": {
+        "name": "Spring Actuator Information Leak",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Active",
+        "cwe": "215",
+        "wasc": "13"
+    },
+    "40043": {
+        "name": "Log4Shell",
+        "status": "release",
+        "risk": "",
+        "type": "Active",
+        "cwe": "",
+        "wasc": ""
+    },
+    "40043-1": {
+        "name": "Log4Shell (CVE-2021-44228)",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "117",
+        "wasc": "20"
+    },
+    "40043-2": {
+        "name": "Log4Shell (CVE-2021-45046)",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "117",
+        "wasc": "20"
+    },
+    "40044": {
+        "name": "Exponential Entity Expansion (Billion Laughs Attack)",
+        "status": "beta",
+        "risk": "Medium",
+        "type": "Active",
+        "cwe": "776",
+        "wasc": "44"
+    },
+    "40045": {
+        "name": "Spring4Shell",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "78",
+        "wasc": "20"
+    },
+    "40046": {
+        "name": "Server Side Request Forgery",
+        "status": "beta",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "918",
+        "wasc": "20"
+    },
+    "40047": {
+        "name": "Text4shell (CVE-2022-42889)",
+        "status": "beta",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "117",
+        "wasc": "20"
+    },
+    "50007": {
+        "name": "ExtensionGraphQl",
+        "status": "alpha",
+        "risk": "",
+        "type": "Tool",
+        "cwe": "",
+        "wasc": ""
+    },
+    "50007-1": {
+        "name": "GraphQL Endpoint Supports Introspection",
+        "status": "alpha",
+        "risk": "Informational",
+        "type": "Tool",
+        "cwe": "16",
+        "wasc": "15"
+    },
+    "50007-2": {
+        "name": "GraphQL Server Implementation Identified",
+        "status": "alpha",
+        "risk": "Informational",
+        "type": "Tool",
+        "cwe": "205",
+        "wasc": "45"
+    },
+    "90001": {
+        "name": "Insecure JSF ViewState",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "642",
+        "wasc": "14"
+    },
+    "90002": {
+        "name": "Java Serialization Object",
+        "status": "beta",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "502",
+        "wasc": ""
+    },
+    "90003": {
+        "name": "Sub Resource Integrity Attribute Missing",
+        "status": "beta",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "345",
+        "wasc": "15"
+    },
+    "90004": {
+        "name": "Insufficient Site Isolation Against Spectre Vulnerability",
+        "status": "beta",
+        "risk": "",
+        "type": "Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "90004-1": {
+        "name": "Insufficient Site Isolation Against Spectre Vulnerability",
+        "status": "beta",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "693",
+        "wasc": "14"
+    },
+    "90004-2": {
+        "name": "Insufficient Site Isolation Against Spectre Vulnerability",
+        "status": "beta",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "693",
+        "wasc": "14"
+    },
+    "90004-3": {
+        "name": "Insufficient Site Isolation Against Spectre Vulnerability",
+        "status": "beta",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "693",
+        "wasc": "14"
+    },
+    "90005": {
+        "name": "Fetch Metadata Request Headers",
+        "status": "alpha",
+        "risk": "",
+        "type": "Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "90005-1": {
+        "name": "Sec-Fetch-Site Header is Missing",
+        "status": "alpha",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "352",
+        "wasc": "9"
+    },
+    "90005-2": {
+        "name": "Sec-Fetch-Mode Header is Missing",
+        "status": "alpha",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "352",
+        "wasc": "9"
+    },
+    "90005-3": {
+        "name": "Sec-Fetch-Dest Header is Missing",
+        "status": "alpha",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "352",
+        "wasc": "9"
+    },
+    "90005-4": {
+        "name": "Sec-Fetch-User Header is Missing",
+        "status": "alpha",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "352",
+        "wasc": "9"
+    },
+    "90005-5": {
+        "name": "Sec-Fetch-Site Header Has an Invalid Value",
+        "status": "alpha",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "352",
+        "wasc": "9"
+    },
+    "90005-6": {
+        "name": "Sec-Fetch-Mode Header Has an Invalid Value",
+        "status": "alpha",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "352",
+        "wasc": "9"
+    },
+    "90005-7": {
+        "name": "Sec-Fetch-Dest Header Has an Invalid Value",
+        "status": "alpha",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "352",
+        "wasc": "9"
+    },
+    "90005-8": {
+        "name": "Sec-Fetch-User Header Has an Invalid Value",
+        "status": "alpha",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "352",
+        "wasc": "9"
+    },
+    "90011": {
+        "name": "Charset Mismatch",
+        "status": "release",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "436",
+        "wasc": "15"
+    },
+    "90017": {
+        "name": "XSLT Injection",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Active",
+        "cwe": "91",
+        "wasc": "23"
+    },
+    "90018": {
+        "name": "Advanced SQL Injection",
+        "status": "beta",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "89",
+        "wasc": "19"
+    },
+    "90019": {
+        "name": "Server Side Code Injection",
+        "status": "release",
+        "risk": "",
+        "type": "Active",
+        "cwe": "",
+        "wasc": ""
+    },
+    "90019-1": {
+        "name": "Server Side Code Injection - PHP Code Injection",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "94",
+        "wasc": "20"
+    },
+    "90019-2": {
+        "name": "Server Side Code Injection - ASP Code Injection",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "94",
+        "wasc": "20"
+    },
+    "90020": {
+        "name": "Remote OS Command Injection",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "78",
+        "wasc": "31"
+    },
+    "90021": {
+        "name": "XPath Injection",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "643",
+        "wasc": "39"
+    },
+    "90022": {
+        "name": "Application Error Disclosure",
+        "status": "release",
+        "risk": "Medium",
+        "type": "Passive",
+        "cwe": "550",
+        "wasc": "13"
+    },
+    "90023": {
+        "name": "XML External Entity Attack",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "611",
+        "wasc": "43"
+    },
+    "90024": {
+        "name": "Generic Padding Oracle",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "209",
+        "wasc": "20"
+    },
+    "90025": {
+        "name": "Expression Language Injection",
+        "status": "beta",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "917",
+        "wasc": "20"
+    },
+    "90026": {
+        "name": "SOAP Action Spoofing",
+        "status": "beta",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "",
+        "wasc": ""
+    },
+    "90027": {
+        "name": "Cookie Slack Detector",
+        "status": "beta",
+        "risk": "Informational",
+        "type": "Active",
+        "cwe": "205",
+        "wasc": "45"
+    },
+    "90028": {
+        "name": "Insecure HTTP Method",
+        "status": "beta",
+        "risk": "Medium",
+        "type": "Active",
+        "cwe": "749",
+        "wasc": "45"
+    },
+    "90029": {
+        "name": "SOAP XML Injection",
+        "status": "beta",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "",
+        "wasc": ""
+    },
+    "90030": {
+        "name": "WSDL File Detection",
+        "status": "beta",
+        "risk": "",
+        "type": "Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "90033": {
+        "name": "Loosely Scoped Cookie",
+        "status": "release",
+        "risk": "Informational",
+        "type": "Passive",
+        "cwe": "565",
+        "wasc": "15"
+    },
+    "90034": {
+        "name": "Cloud Metadata Potentially Exposed",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "",
+        "wasc": ""
+    },
+    "90035": {
+        "name": "Server Side Template Injection",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "1336",
+        "wasc": "20"
+    },
+    "90036": {
+        "name": "Server Side Template Injection (Blind)",
+        "status": "release",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "1336",
+        "wasc": "20"
+    },
+    "90039": {
+        "name": "NoSQL Injection - MongoDB (Time Based)",
+        "status": "alpha",
+        "risk": "High",
+        "type": "Active",
+        "cwe": "943",
+        "wasc": "19"
+    },
+    "100002": {
+        "name": "Server is running on Clacks - GNU Terry Pratchett",
+        "status": "alpha",
+        "risk": "Informational",
+        "type": "Script Passive",
+        "cwe": "200",
+        "wasc": "13"
+    },
+    "100003": {
+        "name": "Cookie Set Without HttpOnly Flag",
+        "status": "alpha",
+        "risk": "Low",
+        "type": "Script Passive",
+        "cwe": "",
+        "wasc": "13"
+    },
+    "100004": {
+        "name": "Content Security Policy Violations Reporting Enabled",
+        "status": "alpha",
+        "risk": "Informational",
+        "type": "Script Passive",
+        "cwe": "200",
+        "wasc": "13"
+    },
+    "100005": {
+        "name": "SameSite Cookie Attribute Protection Used",
+        "status": "alpha",
+        "risk": "Informational",
+        "type": "Script Passive",
+        "cwe": "352",
+        "wasc": "9"
+    },
+    "100006": {
+        "name": "Information Disclosure - IP Exposed via F5 BIG-IP Persistence Cookie",
+        "status": "alpha",
+        "risk": "Informational",
+        "type": "Script Passive",
+        "cwe": "311",
+        "wasc": "13"
+    },
+    "100007": {
+        "name": "Information Disclosure - Base64-encoded String",
+        "status": "alpha",
+        "risk": "Informational",
+        "type": "Script Passive",
+        "cwe": "311",
+        "wasc": "13"
+    },
+    "100008": {
+        "name": "Information Disclosure - Credit Card Number",
+        "status": "alpha",
+        "risk": "High",
+        "type": "Script Passive",
+        "cwe": "311",
+        "wasc": "13"
+    },
+    "100009": {
+        "name": "Information Disclosure - Email Addresses",
+        "status": "alpha",
+        "risk": "Low",
+        "type": "Script Passive",
+        "cwe": "311",
+        "wasc": "13"
+    },
+    "100010": {
+        "name": "Information Disclosure - Hash",
+        "status": "alpha",
+        "risk": "Low",
+        "type": "Script Passive",
+        "cwe": "327",
+        "wasc": "13"
+    },
+    "100011": {
+        "name": "Information Disclosure - HTML Comments",
+        "status": "alpha",
+        "risk": "Informational",
+        "type": "Script Passive",
+        "cwe": "615",
+        "wasc": "13"
+    },
+    "100012": {
+        "name": "Information Disclosure - IBAN Numbers",
+        "status": "alpha",
+        "risk": "Low",
+        "type": "Script Passive",
+        "cwe": "200",
+        "wasc": "13"
+    },
+    "100013": {
+        "name": "Information Disclosure - Private IP Address",
+        "status": "alpha",
+        "risk": "Medium",
+        "type": "Script Passive",
+        "cwe": "200",
+        "wasc": "13"
+    },
+    "100014": {
+        "name": "Reflected HTTP GET Parameter(s)",
+        "status": "alpha",
+        "risk": "Informational",
+        "type": "Script Passive",
+        "cwe": "79",
+        "wasc": "8"
+    },
+    "100015": {
+        "name": "HUNT Methodology",
+        "status": "alpha",
+        "risk": "Informational",
+        "type": "Script Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "100016": {
+        "name": "Missing Security Headers",
+        "status": "alpha",
+        "risk": "Low",
+        "type": "Script Passive",
+        "cwe": "693",
+        "wasc": "15"
+    },
+    "100017": {
+        "name": "Non Static Site Detected",
+        "status": "alpha",
+        "risk": "Informational",
+        "type": "Script Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "100018": {
+        "name": "Relative Path Overwrite",
+        "status": "alpha",
+        "risk": "Medium",
+        "type": "Script Passive",
+        "cwe": "20",
+        "wasc": "13"
+    },
+    "100019": {
+        "name": "Information Disclosure - Server Header",
+        "status": "alpha",
+        "risk": "Low",
+        "type": "Script Passive",
+        "cwe": "200",
+        "wasc": "13"
+    },
+    "100020": {
+        "name": "Information Disclosure - SQL Error",
+        "status": "alpha",
+        "risk": "High",
+        "type": "Script Passive",
+        "cwe": "209",
+        "wasc": "13"
+    },
+    "100021": {
+        "name": "Telerik UI for ASP.NET AJAX Cryptographic Weakness (CVE-2017-9248)",
+        "status": "alpha",
+        "risk": "High",
+        "type": "Script Passive",
+        "cwe": "327",
+        "wasc": "13"
+    },
+    "100022": {
+        "name": "Upload Form Discovered",
+        "status": "alpha",
+        "risk": "Informational",
+        "type": "Script Passive",
+        "cwe": "434",
+        "wasc": "20"
+    },
+    "100023": {
+        "name": "Information Disclosure - X-Powered-By Header",
+        "status": "alpha",
+        "risk": "Low",
+        "type": "Script Passive",
+        "cwe": "200",
+        "wasc": "13"
+    },
+    "100025": {
+        "name": "Cross-Site WebSocket Hijacking",
+        "status": "alpha",
+        "risk": "High",
+        "type": "Script Active",
+        "cwe": "346",
+        "wasc": "9"
+    },
+    "100026": {
+        "name": "JWT None Exploit",
+        "status": "alpha",
+        "risk": "High",
+        "type": "Script Active",
+        "cwe": "347",
+        "wasc": "15"
+    },
+    "100029": {
+        "name": "File Content Disclosure (CVE-2019-5418)",
+        "status": "alpha",
+        "risk": "High",
+        "type": "Script Active",
+        "cwe": "74",
+        "wasc": "33"
+    },
+    "100030": {
+        "name": "Backup File Detected",
+        "status": "alpha",
+        "risk": "Low",
+        "type": "Script Active",
+        "cwe": "425",
+        "wasc": "34"
+    },
+    "100034": {
+        "name": "Information Disclosure - Google API Key",
+        "status": "alpha",
+        "risk": "Informational",
+        "type": "Script Passive",
+        "cwe": "200",
+        "wasc": "13"
+    },
+    "100035": {
+        "name": "Information Disclosure - Java Stack Trace",
+        "status": "alpha",
+        "risk": "Medium",
+        "type": "Script Passive",
+        "cwe": "209",
+        "wasc": "13"
+    },
+    "100036": {
+        "name": "Information Disclosure - Amazon S3 Bucket URL",
+        "status": "alpha",
+        "risk": "Low",
+        "type": "Script Passive",
+        "cwe": "200",
+        "wasc": "13"
+    },
+    "110001": {
+        "name": "Application Error Disclosure via WebSockets",
+        "status": "release",
+        "risk": "Medium",
+        "type": "WebSocket Passive",
+        "cwe": "209",
+        "wasc": "13"
+    },
+    "110002": {
+        "name": "Base64 Disclosure in WebSocket message",
+        "status": "release",
+        "risk": "Informational",
+        "type": "WebSocket Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "110003": {
+        "name": "Information Disclosure - Debug Error Messages via WebSocket",
+        "status": "release",
+        "risk": "Low",
+        "type": "WebSocket Passive",
+        "cwe": "200",
+        "wasc": "13"
+    },
+    "110004": {
+        "name": "Email address found in WebSocket message",
+        "status": "release",
+        "risk": "Informational",
+        "type": "WebSocket Passive",
+        "cwe": "200",
+        "wasc": "13"
+    },
+    "110005": {
+        "name": "Personally Identifiable Information via WebSocket",
+        "status": "release",
+        "risk": "High",
+        "type": "WebSocket Passive",
+        "cwe": "359",
+        "wasc": "13"
+    },
+    "110006": {
+        "name": "Private IP Disclosure via WebSocket",
+        "status": "release",
+        "risk": "Low",
+        "type": "WebSocket Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "110007": {
+        "name": "Username Hash Found in WebSocket message",
+        "status": "release",
+        "risk": "Informational",
+        "type": "WebSocket Passive",
+        "cwe": "284",
+        "wasc": "2"
+    },
+    "110008": {
+        "name": "Information Disclosure - Suspicious Comments in XML via WebSocket",
+        "status": "release",
+        "risk": "Informational",
+        "type": "WebSocket Passive",
+        "cwe": "200",
+        "wasc": "13"
+    },
+    "110009": {
+        "name": "Full Path Disclosure",
+        "status": "alpha",
+        "risk": "Low",
+        "type": "Passive",
+        "cwe": "209",
+        "wasc": "13"
+    },
+    "120000": {
+        "name": "Information Disclosure - Information in Browser Storage",
+        "status": "alpha",
+        "risk": "",
+        "type": "Client Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "120000-1": {
+        "name": "Information Disclosure - Information in Browser localStorage",
+        "status": "alpha",
+        "risk": "Informational",
+        "type": "Client Passive",
+        "cwe": "359",
+        "wasc": "13"
+    },
+    "120000-2": {
+        "name": "Information Disclosure - Information in Browser sessionStorage",
+        "status": "alpha",
+        "risk": "Informational",
+        "type": "Client Passive",
+        "cwe": "359",
+        "wasc": "13"
+    },
+    "120001": {
+        "name": "Information Disclosure - Sensitive Information in Browser Storage",
+        "status": "alpha",
+        "risk": "",
+        "type": "Client Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "120001-1": {
+        "name": "Information Disclosure - Sensitive Information in Browser localStorage",
+        "status": "alpha",
+        "risk": "Low",
+        "type": "Client Passive",
+        "cwe": "359",
+        "wasc": "13"
+    },
+    "120001-2": {
+        "name": "Information Disclosure - Sensitive Information in Browser sessionStorage",
+        "status": "alpha",
+        "risk": "Low",
+        "type": "Client Passive",
+        "cwe": "359",
+        "wasc": "13"
+    },
+    "120002": {
+        "name": "Information Disclosure - JWT in Browser Storage",
+        "status": "alpha",
+        "risk": "",
+        "type": "Client Passive",
+        "cwe": "",
+        "wasc": ""
+    },
+    "120002-1": {
+        "name": "Information Disclosure - JWT in Browser localStorage",
+        "status": "alpha",
+        "risk": "Medium",
+        "type": "Client Passive",
+        "cwe": "922",
+        "wasc": "13"
+    },
+    "120002-2": {
+        "name": "Information Disclosure - JWT in Browser sessionStorage",
+        "status": "alpha",
+        "risk": "Informational",
+        "type": "Client Passive",
+        "cwe": "922",
+        "wasc": "13"
+    }
+}

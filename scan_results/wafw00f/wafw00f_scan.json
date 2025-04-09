@@ -1,0 +1,8 @@
+[
+  {
+    "url": "http://testphp.vulnweb.com/",
+    "detected": false,
+    "firewall": "None",
+    "manufacturer": "None"
+  }
+]
