@@ -109,7 +109,6 @@ def collect_scan_options():
     print("3. Medium")
     print("4. Low")
     print("5. Info")
-    print("6. All")
 
     severity_mapping = {
         "1": "critical",
@@ -117,17 +116,11 @@ def collect_scan_options():
         "3": "medium",
         "4": "low",
         "5": "info",
-        "6": "all"
     }
 
     while True:
         severity_input = input("Choose severity level(s) for Nuclei (comma-separated, e.g., 1,2 or 6 for all): ")
         selected = [s.strip() for s in severity_input.split(",")]
-
-        # If user selects '6' (All), override and break
-        if "6" in selected:
-            nuclei_severity = ["all"]
-            break
 
         # Validate all inputs are valid keys
         if all(s in severity_mapping for s in selected):

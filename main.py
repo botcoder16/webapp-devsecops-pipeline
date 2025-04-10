@@ -9,8 +9,6 @@ from scanner.burp_pro_scan import get_burp_scan_input, execute_burp_scan
 import requests
 import os
 import zipfile
-import io
-import threading
 from concurrent.futures import ThreadPoolExecutor
 
 API_URL = "http://192.168.111.134:5000/scan"

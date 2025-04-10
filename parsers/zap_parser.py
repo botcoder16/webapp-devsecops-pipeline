@@ -30,11 +30,13 @@ def simplify_security_scan(json_data):
                 "urls": []  # List to store URLs for this alert
             }
         
-        simplified_results[alert_key]["urls"].append({
-            "url": url,
-            "param": param,
-            "evidence": evidence
-        })
+        # simplified_results[alert_key]["urls"].append({
+        #     "url": url,
+        #     "param": param,
+        #     "evidence": evidence
+        # })
+        
+        simplified_results[alert_key]["urls"].append(url)   
     
     return list(simplified_results.values())
 
