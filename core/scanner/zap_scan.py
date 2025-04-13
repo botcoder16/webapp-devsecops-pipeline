@@ -103,20 +103,20 @@ def execute_zap_scan(scan_config):
 
         context_id = 1
         context_name = "Default Context"
-
+        url=scan_config["target_url"]
+        
         # Configure scan
-        zap.ascan.set_option_delay_in_ms(scan_config.get("delay", 0))
-        zap.ascan.set_option_thread_per_host(scan_config.get("threads", 1))
+        zap.ascan.set_option_delay_in_ms(scan_config.get("zap_delay"))
+        zap.ascan.set_option_thread_per_host(scan_config.get("threads_concurrency"))
 
-        credentials = scan_config.get("credentials", [])
+        credentials = scan_config.get("zap_credentials", [])
 
         if credentials and all(k in credentials[0] for k in ("login_url", "username", "password")):
             login_url = credentials[0]["login_url"]
             username = credentials[0]["username"]
             password = credentials[0]["password"]
-
-            include_url = login_url
-            zap.context.include_in_context(context_name, include_url)
+            
+            zap.context.include_in_context(context_name, login_url)
             print("Configured include and exclude regex(s) in context")
 
             # Correct way to create form data
@@ -134,20 +134,20 @@ def execute_zap_scan(scan_config):
         else:
             print("Credentials not provided or incomplete. Skipping authentication configuration.")
 
-        print(f"Accessing target {scan_config['target']}...")
-        zap.urlopen(scan_config["target"])
+        print(f"Accessing target {url}...")
+        zap.urlopen(url)
         time.sleep(2)
 
         # Run spider
         print("Running spider...")
-        zap.spider.scan(scan_config["target"])
+        zap.spider.scan(url)
         while int(zap.spider.status()) < 100:
-            print(f"\rSpider progress: {zap.spider.status()}%")
+            print(f"\rSpider progress: {zap.spider.status()}%",end="")
             time.sleep(5)
 
         # Run active scan
         print("\nRunning active scan...")
-        scan_id = zap.ascan.scan(scan_config["target"], scanpolicyname=scan_config["scan_policy"])
+        scan_id = zap.ascan.scan(url, scanpolicyname=scan_config["scan_policy"])
         while int(zap.ascan.status(scan_id)) < 100:
             print(f"\rScan progress: {zap.ascan.status(scan_id)}%",end="")
             time.sleep(2)
@@ -155,8 +155,8 @@ def execute_zap_scan(scan_config):
         # Get results
         alerts = zap.core.alerts()
         report = {
-            "target": scan_config["target"],
-            "scan_policy": scan_config["scan_policy"],
+            "target": url,
+            "scan_policy": scan_config["zap_scan_policy"],
             "alerts": alerts,
             "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
         }

@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vulnerability Scanner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- Base Styles --- */
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f8f9fa;
+            color: #343a40;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 850px;
+            /* Slightly wider */
+            margin: 30px auto;
+            padding: 30px 40px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        h2 {
+            /* General Section Headers */
+            color: #007bff;
+            /* Primary color */
+            margin-top: 25px;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            font-weight: 600;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+
+        h3.tool-options-header {
+            /* Tool Specific Headers */
+            margin-top: 20px;
+            color: #17a2b8;
+            /* Teal color */
+            font-size: 1.3rem;
+            font-weight: 600;
+            border-bottom: 2px solid #17a2b8;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .form-section:last-of-type {
+            border-bottom: none;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            /* Standard spacing */
+        }
+
+        .form-group-inline {
+            /* For checkbox + input */
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group-inline label:first-child {
+            /* Checkbox label */
+            margin-bottom: 0;
+            flex-shrink: 0;
+            /* Prevent checkbox label from shrinking */
+        }
+
+        .form-group-inline input[type="text"],
+        .form-group-inline input[type="number"] {
+            flex-grow: 1;
+            /* Allow input to take remaining space */
+            margin-top: 0;
+            /* Reset margin if needed */
+        }
+
+        label {
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 8px;
+            display: block;
+            /* Default block display */
+        }
+
+        input[type="text"],
+        input[type="url"],
+        /* Added type=url */
+        input[type="password"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            /* Slightly smaller padding */
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            font-size: 0.95rem;
+            /* Slightly smaller font */
+            box-sizing: border-box;
+        }
+
+        input[type="text"]:focus,
+        input[type="url"]:focus,
+        input[type="password"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+        }
+
+        input:disabled {
+            /* Style for disabled inputs */
+            background-color: #e9ecef;
+            cursor: not-allowed;
+        }
+
+        /* Checkbox & Radio Styles */
+        .checkbox-group {
+            /* For tool selection */
+            margin-top: 10px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+        }
+
+        .checkbox-group label,
+        .sub-checkbox-group label,
+        .radio-group label,
+        label.inline-checkbox
+
+        /* For single checkboxes next to inputs */
+            {
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 0;
+            /* Reset bottom margin for inline elements */
+            font-weight: 500;
+            color: #495057;
+            cursor: pointer;
+            margin-right: 15px;
+            /* Spacing between inline items */
+        }
+
+        input[type="checkbox"],
+        input[type="radio"] {
+            margin-right: 8px;
+            width: 17px;
+            /* Slightly smaller */
+            height: 17px;
+            accent-color: #007bff;
+            cursor: pointer;
+            vertical-align: middle;
+            /* Align better with text */
+        }
+
+        /* Specific Group Styling */
+        .options-group {
+            /* Container for auth fields, module lists etc. */
+            border: 1px solid #e9ecef;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-top: 10px;
+            /* Space from the group label */
+            margin-bottom: 20px;
+            background-color: #fdfdff;
+        }
+
+        .options-group label {
+            /* Labels within these groups */
+            font-weight: 500;
+            color: #495057;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .sub-checkbox-group,
+        .radio-group {
+            /* Container for multiple checkboxes/radios */
+            padding: 5px 0;
+        }
+
+        .sub-checkbox-group label,
+        .radio-group label {
+            margin-bottom: 8px;
+            /* Space between lines of checkboxes/radios */
+            display: flex;
+            /* Ensure alignment */
+            width: fit-content;
+            /* Prevent stretching */
+        }
+
+        /* Button */
+        button[type="submit"] {
+            padding: 12px 25px;
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            font-size: 1.05rem;
+            font-weight: 600;
+            display: block;
+            margin: 30px auto 0 auto;
+            width: fit-content;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        button[type="submit"]:active {
+            transform: scale(0.98);
+        }
+
+        /* Alerts */
+        .alert {
+            margin: 20px 0;
+            padding: 15px 20px;
+            border-radius: 5px;
+            font-size: 1rem;
+            border: 1px solid transparent;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        .alert-warning {
+            background-color: #fff3cd;
+            border-color: #ffeeba;
+            color: #856404;
+        }
+
+        .alert strong {
+            font-weight: 700;
+        }
+
+        /* Help Text */
+        small {
+            color: #6c757d;
+            font-size: 0.85rem;
+            display: block;
+            margin-top: 6px;
+        }
+
+        /* Utility Classes */
+        .hidden-options,
+        .hidden {
+            display: none;
+        }
+
+        .mb-0 {
+            margin-bottom: 0 !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Vulnerability Scan Configuration</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+            {% if category == 'error' %}<strong>Error:</strong> {% endif %}
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <form method="post">
+
+            <div class="form-section">
+                <h2>General Scan Options</h2>
+                <div class="form-group">
+                    <label for="target_url">Target URL (required):</label>
+                    <input type="url" id="target_url" name="target_url" placeholder="e.g., https://example.com"
+                        required>
+                    <small>Enter the full URL of the application to scan.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="max_depth">Max Crawl Depth:</label>
+                    <input type="number" id="max_depth" name="max_depth" value="40" min="0">
+                    <small>Maximum depth for crawlers (e.g., Wapiti). Default: 40.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="max_links">Max Links per Page:</label>
+                    <input type="number" id="max_links" name="max_links" value="1000" min="1">
+                    <small>Maximum links to follow per page (e.g., Wapiti). Default: 1000.</small>
+                </div>
+
+                <div class="form-group form-group-inline">
+                    <label class="inline-checkbox mb-0">
+                        <input type="checkbox" id="thread_concurrency_chk" name="thread_concurrency_chk"> Set
+                        Concurrency:
+                    </label>
+                    <input type="number" id="thread_concurrency" name="thread_concurrency" placeholder="e.g., 10"
+                        min="1" disabled>
+                    <small class="mb-0">Threads for tools like Nuclei, WhatWeb, ZAP.</small>
+                </div>
+
+                <div class="form-group form-group-inline">
+                    <label class="inline-checkbox mb-0">
+                        <input type="checkbox" id="rate_limit_chk" name="rate_limit_chk"> Set Rate Limit:
+                    </label>
+                    <input type="number" id="rate_limit" name="rate_limit" placeholder="Requests/sec (e.g., 150)"
+                        min="1" disabled>
+                    <small class="mb-0">Requests per second (e.g., Nuclei).</small>
+                </div>
+
+                <div class="form-group form-group-inline">
+                    <label class="inline-checkbox mb-0">
+                        <input type="checkbox" id="timeout_chk" name="timeout_chk"> Set Timeout:
+                    </label>
+                    <input type="number" id="timeout" name="timeout" value="30" min="1" disabled>
+                    <small class="mb-0">Request timeout in seconds (e.g., Wapiti).</small>
+                </div>
+
+                <div class="form-group form-group-inline">
+                    <label class="inline-checkbox mb-0">
+                        <input type="checkbox" id="max_scan_time_chk" name="max_scan_time_chk"> Set Max Scan Time:
+                    </label>
+                    <input type="number" id="max_attack_time" name="max_attack_time" placeholder="Seconds" min="1"
+                        disabled>
+                    <small class="mb-0">Maximum scan duration in seconds (e.g., Wapiti, Nikto).</small>
+                </div>
+
+                <div class="form-group form-group-inline">
+                    <label class="inline-checkbox mb-0">
+                        <input type="checkbox" id="custom_headers_chk" name="custom_headers_chk"> Add Custom Headers:
+                    </label>
+                    <input type="text" id="custom_headers" name="custom_headers"
+                        placeholder="Header1: Value1; Header2: Value2" disabled>
+                    <small class="mb-0">Semi-colon separated headers (e.g., Wapiti).</small>
+                </div>
+
+                <div class="form-group form-group-inline">
+                    <label class="inline-checkbox mb-0">
+                        <input type="checkbox" id="user_agent_chk" name="user_agent_chk"> Set Custom User-Agent:
+                    </label>
+                    <input type="text" id="user_agent" name="user_agent" placeholder="e.g., MyScanner/1.0" disabled>
+                    <small class="mb-0">Override the default User-Agent string (e.g., Wapiti).</small>
+                </div>
+
+                <div class="form-group form-group-inline">
+                    <label class="inline-checkbox mb-0">
+                        <input type="checkbox" id="wapiti_post_data_chk" name="wapiti_post_data_chk"> Send POST Data
+                        (Wapiti):
+                    </label>
+                    <input type="text" id="wapiti_post_data" name="wapiti_post_data"
+                        placeholder="param1=value1&param2=value2" disabled>
+                    <small class="mb-0">URL-encoded POST data for Wapiti.</small>
+                </div>
+
+                <div class="form-group">
+                    <label class="inline-checkbox">
+                        <input type="checkbox" name="disable_ssl_verify"> Disable SSL Verification
+                    </label>
+                    <small>Disables SSL certificate checks (use with caution).</small>
+                </div>
+
+                <div class="form-group">
+                    <label class="inline-checkbox">
+                        <input type="checkbox" name="verbose"> Verbose Output (CLI)
+                    </label>
+                    <small>Enable more detailed output in the script's console log.</small>
+                </div>
+            </div>
+            <div class="form-section">
+                <h2>Select Tools</h2>
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <label>
+                            <input type="checkbox" id="use_zap" name="use_zap"> ZAP
+                        </label>
+                        <label>
+                            <input type="checkbox" id="use_burp" name="use_burp"> Burp Suite
+                        </label>
+                        <label>
+                            <input type="checkbox" id="use_nuclei" name="use_nuclei"> Nuclei
+                        </label>
+                        <label>
+                            <input type="checkbox" id="use_wapiti" name="use_wapiti"> Wapiti
+                        </label>
+                        <label>
+                            <input type="checkbox" id="use_nikto" name="use_nikto"> Nikto
+                        </label>
+                        <label>
+                            <input type="checkbox" id="use_whatweb" name="use_whatweb"> WhatWeb
+                        </label>
+                        <label>
+                            <input type="checkbox" id="use_wafw00f" name="use_wafw00f"> WafW00f
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div id="zap-options-container" class="form-section hidden-options">
+                <h3 class="tool-options-header">ZAP Scanner Options</h3>
+                <div class="form-group">
+                    <label for="zap_scan_policy">Scan Policy:</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="zap_scan_policy" value="Default Policy" checked> Default
+                            Policy</label>
+                        <label><input type="radio" name="zap_scan_policy" value="API"> API</label>
+                        <label><input type="radio" name="zap_scan_policy" value="Dev CICD"> Dev CICD</label>
+                        <label><input type="radio" name="zap_scan_policy" value="Dev Full">Dev Full</label>
+                        <label><input type="radio" name="zap_scan_policy" value="Dev Standard">Dev Standard</label>
+                        <label><input type="radio" name="zap_scan_policy" value="QA Full">QA Full</label>
+                        <label><input type="radio" name="zap_scan_policy" value="QA Standard">QA Standard</label>
+                        <label><input type="radio" name="zap_scan_policy" value="Sequence">Sequence</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="zap_delay">Delay (ms):</label>
+                    <input type="number" id="zap_delay" name="zap_delay" value="100" placeholder="e.g., 100" min="0">
+                    <small>Delay between ZAP requests.</small>
+                </div>
+                <div class="form-group">
+                    <label>ZAP Authentication:</label>
+                    <div class="options-group">
+                        <label class="sub-checkbox-group">
+                            <input type="checkbox" id="zap_use_auth" name="zap_use_auth"> Use Authentication
+                        </label>
+                        <div class="form-group">
+                            <label for="zap_login_url">Login URL (optional):</label>
+                            <input type="text" id="zap_login_url" name="zap_login_url"
+                                placeholder="Leave blank to use Target URL" disabled>
+                            <small>URL of the login form.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="zap_username">Username:</label>
+                            <input type="text" id="zap_username" name="zap_username" placeholder="Enter login username"
+                                disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="zap_password">Password:</label>
+                            <input type="password" id="zap_password" name="zap_password"
+                                placeholder="Enter login password" disabled>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="burp-options-container" class="form-section hidden-options">
+                <h3 class="tool-options-header">Burp Suite Scanner Options</h3>
+                <div class="form-group">
+                    <label for="burp_scan_config">Scan Configuration:</label>
+                    <select id="burp_scan_config" name="burp_scan_config">
+                        <option value="Crawl and Audit - Balanced" selected>Crawl and Audit - Balanced</option>
+                        <option value="Crawl and Audit - Fast">Crawl and Audit - Fast</option>
+                        <option value="Crawl and Audit - Deep">Crawl and Audit - Deep</option>
+                        <option value="Crawl - fast">Crawl - fast</option>
+                        <option value="Crawl - deep">Crawl - deep</option>
+                        {/* Add other Burp configs */}
+                    </select>
+                    <small>Select a predefined Burp scan configuration.</small>
+                </div>
+                <div class="form-group">
+                    <label>Burp Suite Authentication:</label>
+                    <div class="options-group">
+                        <label class="sub-checkbox-group">
+                            <input type="checkbox" id="burp_use_auth" name="burp_use_auth"> Use Authentication
+                        </label>
+                        <div class="form-group">
+                            <label for="burp_username">Username:</label>
+                            <input type="text" id="burp_username" name="burp_username"
+                                placeholder="Enter login username" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="burp_password">Password:</label>
+                            <input type="password" id="burp_password" name="burp_password"
+                                placeholder="Enter login password" disabled>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="nuclei-options-container" class="form-section hidden-options">
+                <h3 class="tool-options-header">Nuclei Scanner Options</h3>
+                <div class="form-group">
+                    <label>Template Selection Method:</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="nuclei_template_method" value="default" checked>
+                            Default/Recommended</label>
+                        <label><input type="radio" name="nuclei_template_method" value="specific"> Use Specific
+                            Templates</label>
+                        <label><input type="radio" name="nuclei_template_method" value="exclude"> Exclude Specific
+                            Templates</label>
+                    </div>
+                </div>
+                <div class="form-group hidden" id="nuclei_templates_group">
+                    <label for="nuclei_templates">Specific Templates:</label>
+                    <input type="text" id="nuclei_templates" name="nuclei_templates"
+                        placeholder="e.g., vulnerabilities/cves/*, technologies/">
+                    <small>Comma-separated paths or keywords.</small>
+                </div>
+                <div class="form-group hidden" id="nuclei_exclude_templates_group">
+                    <label for="nuclei_exclude_templates">Exclude Templates:</label>
+                    <input type="text" id="nuclei_exclude_templates" name="nuclei_exclude_templates"
+                        placeholder="e.g., technologies/waf, info/routines">
+                    <small>Comma-separated templates/paths to exclude.</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Severity:</label>
+                    <div class="options-group sub-checkbox-group">
+                        <label>
+                            <input type="checkbox" name="nuclei_severity" value="critical"> Critical
+                        </label>
+                        <label>
+                            <input type="checkbox" name="nuclei_severity" value="high"> High
+                        </label>
+                        <label>
+                            <input type="checkbox" name="nuclei_severity" value="medium"> Medium
+                        </label>
+                        <label>
+                            <input type="checkbox" name="nuclei_severity" value="low"> Low
+                        </label>
+                        <label>
+                            <input type="checkbox" name="nuclei_severity" value="info"> Info
+                        </label>
+                    </div>
+                    <small>Select severity levels to include. If none selected, defaults may apply.</small>
+                </div>
+            </div>
+            <div id="wapiti-options-container" class="form-section hidden-options">
+                <h3 class="tool-options-header">Wapiti Scanner Options</h3>
+                <div class="form-group">
+                    <label for="wapiti_force">Scan Aggressiveness:</label>
+                    <select id="wapiti_force" name="wapiti_force">
+                        <option value="Polite">Polite</option>
+                        <option value="Normal" selected>Normal</option>
+                        <option value="Aggressive">Aggressive</option>
+                        <option value="Insane">Insane</option>
+                        <option value="Paranoid">Paranoid</option>
+                        <option value="Sneaky">Sneaky</option>
+                    </select>
+                    <small>Controls the Wapiti scan force level (-S flag).</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Wapiti Modules:</label>
+                    <div class="options-group">
+                        <label class="sub-checkbox-group">
+                            <input type="checkbox" id="wapiti_all_modules" name="wapiti_all_modules"> Run All Modules
+                        </label>
+                        <hr>
+                        <div id="wapiti_specific_modules" class="sub-checkbox-group">
+                            <label><input type="checkbox" name="wapiti_modules" value="sql"> SQL Injection</label>
+                            <label><input type="checkbox" name="wapiti_modules" value="xss"> Cross-Site
+                                Scripting</label>
+                            <label><input type="checkbox" name="wapiti_modules" value="crlf"> CRLF Injection</label>
+                            <label><input type="checkbox" name="wapiti_modules" value="exec"> Command Execution</label>
+                            <label><input type="checkbox" name="wapiti_modules" value="file"> File Handling
+                                (LFI/RFI)</label>
+                            <label><input type="checkbox" name="wapiti_modules" value="htaccess"> Htaccess
+                                Bypass</label>
+                            <label><input type="checkbox" name="wapiti_modules" value="backup"> Backup Files</label>
+                        </div>
+                    </div>
+                    <small>Select specific Wapiti modules or run all.</small>
+                </div>
+            </div>
+            <div id="nikto-options-container" class="form-section hidden-options">
+                <h3 class="tool-options-header">Nikto Scanner Options</h3>
+                <p style="color: #6c757d;">Nikto primarily uses tuning options (set automatically). General options like
+                    Max Scan Time and Disable SSL apply.</p>
+                
+            </div>
+            <div id="whatweb-options-container" class="form-section hidden-options">
+                <h3 class="tool-options-header">WhatWeb Scanner Options</h3>
+                <p style="color: #6c757d;">WhatWeb primarily uses aggression levels (set automatically). General options
+                    like Concurrency apply.</p>
+                
+            </div>
+            <div id="wafw00f-options-container" class="form-section hidden-options">
+                <h3 class="tool-options-header">WafW00f Scanner Options</h3>
+                <p style="color: #6c757d;">WafW00f runs with default settings to detect firewalls.</p>
+                
+            </div>
+            <button type="submit">Run Scan</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Helper Function to Toggle Input Disabled State ---
+            function toggleInputDisabled(checkboxId, inputId) {
+                const checkbox = document.getElementById(checkboxId);
+                const input = document.getElementById(inputId);
+                if (checkbox && input) {
+                    input.disabled = !checkbox.checked;
+                    if (input.disabled) {
+                        input.value = ''; // Clear value when disabled
+                        input.style.backgroundColor = '#e9ecef';
+                    } else {
+                        input.style.backgroundColor = '';
+                    }
+                    checkbox.addEventListener('change', function () {
+                        input.disabled = !this.checked;
+                        if (input.disabled) {
+                            input.value = ''; // Clear value when disabling
+                            input.style.backgroundColor = '#e9ecef';
+                        } else {
+                            input.style.backgroundColor = '';
+                        }
+                    });
+                }
+            }
+
+            // --- Toggle General Optional Inputs ---
+            toggleInputDisabled('thread_concurrency_chk', 'thread_concurrency');
+            toggleInputDisabled('rate_limit_chk', 'rate_limit');
+            toggleInputDisabled('timeout_chk', 'timeout');
+            toggleInputDisabled('max_scan_time_chk', 'max_attack_time');
+            toggleInputDisabled('custom_headers_chk', 'custom_headers');
+            toggleInputDisabled('user_agent_chk', 'user_agent');
+            toggleInputDisabled('wapiti_post_data_chk', 'wapiti_post_data');
+
+
+            // --- Tool Option Section Toggling ---
+            const toolCheckboxes = {
+                'use_zap': document.getElementById('zap-options-container'),
+                'use_burp': document.getElementById('burp-options-container'),
+                'use_nuclei': document.getElementById('nuclei-options-container'),
+                'use_wapiti': document.getElementById('wapiti-options-container'),
+                'use_nikto': document.getElementById('nikto-options-container'),
+                'use_whatweb': document.getElementById('whatweb-options-container'),
+                'use_wafw00f': document.getElementById('wafw00f-options-container')
+            };
+
+            function toggleToolOptions() {
+                for (const checkboxId in toolCheckboxes) {
+                    const checkbox = document.getElementById(checkboxId);
+                    const container = toolCheckboxes[checkboxId];
+                    if (checkbox && container) {
+                        if (checkbox.checked) {
+                            container.classList.remove('hidden-options');
+                        } else {
+                            container.classList.add('hidden-options');
+                        }
+                    }
+                }
+            }
+
+            // Add event listeners to tool checkboxes
+            for (const checkboxId in toolCheckboxes) {
+                const checkbox = document.getElementById(checkboxId);
+                if (checkbox) {
+                    checkbox.addEventListener('change', toggleToolOptions);
+                }
+            }
+            // Initial check on page load
+            toggleToolOptions();
+
+
+            // --- Authentication Field Toggling ---
+            const zapAuthCheckbox = document.getElementById('zap_use_auth');
+            const zapCredentialsFields = ['zap_login_url', 'zap_username', 'zap_password'];
+            const burpAuthCheckbox = document.getElementById('burp_use_auth');
+            const burpCredentialsFields = ['burp_username', 'burp_password'];
+
+            function toggleAuthFields(checkbox, fieldIds) {
+                const disable = !checkbox.checked;
+                fieldIds.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (field) {
+                        field.disabled = disable;
+                        field.style.backgroundColor = disable ? '#e9ecef' : '';
+                        if (disable) field.value = '';
+                    }
+                });
+            }
+
+            if (zapAuthCheckbox) {
+                toggleAuthFields(zapAuthCheckbox, zapCredentialsFields); // Initial state
+                zapAuthCheckbox.addEventListener('change', function () { toggleAuthFields(this, zapCredentialsFields); });
+            }
+            if (burpAuthCheckbox) {
+                toggleAuthFields(burpAuthCheckbox, burpCredentialsFields); // Initial state
+                burpAuthCheckbox.addEventListener('change', function () { toggleAuthFields(this, burpCredentialsFields); });
+            }
+
+            // --- Nuclei Template Method Toggling ---
+            const nucleiMethodRadios = document.querySelectorAll('input[name="nuclei_template_method"]');
+            const nucleiSpecificGroup = document.getElementById('nuclei_templates_group');
+            const nucleiExcludeGroup = document.getElementById('nuclei_exclude_templates_group');
+            const nucleiSpecificInput = document.getElementById('nuclei_templates');
+            const nucleiExcludeInput = document.getElementById('nuclei_exclude_templates');
+
+            function toggleNucleiInputs() {
+                let selectedMethod = 'default';
+                nucleiMethodRadios.forEach(radio => {
+                    if (radio.checked) {
+                        selectedMethod = radio.value;
+                    }
+                });
+
+                if (selectedMethod === 'specific') {
+                    nucleiSpecificGroup.classList.remove('hidden');
+                    nucleiExcludeGroup.classList.add('hidden');
+                    if (nucleiExcludeInput) nucleiExcludeInput.value = ''; // Clear other input
+                } else if (selectedMethod === 'exclude') {
+                    nucleiSpecificGroup.classList.add('hidden');
+                    nucleiExcludeGroup.classList.remove('hidden');
+                    if (nucleiSpecificInput) nucleiSpecificInput.value = ''; // Clear other input
+                } else { // default
+                    nucleiSpecificGroup.classList.add('hidden');
+                    nucleiExcludeGroup.classList.add('hidden');
+                    if (nucleiSpecificInput) nucleiSpecificInput.value = '';
+                    if (nucleiExcludeInput) nucleiExcludeInput.value = '';
+                }
+            }
+
+            nucleiMethodRadios.forEach(radio => radio.addEventListener('change', toggleNucleiInputs));
+            toggleNucleiInputs(); // Initial check
+
+
+            // --- Wapiti "All Modules" Toggling ---
+            const wapitiAllModulesCheckbox = document.getElementById('wapiti_all_modules');
+            const wapitiSpecificModulesDiv = document.getElementById('wapiti_specific_modules');
+
+            if (wapitiAllModulesCheckbox && wapitiSpecificModulesDiv) {
+                const specificModuleCheckboxes = wapitiSpecificModulesDiv.querySelectorAll('input[type="checkbox"]');
+
+                function toggleWapitiModules() {
+                    const disableSpecific = wapitiAllModulesCheckbox.checked;
+                    specificModuleCheckboxes.forEach(chk => {
+                        chk.disabled = disableSpecific;
+                        chk.checked = disableSpecific ? false : chk.checked; // Uncheck specific if All is checked
+                        chk.closest('label').style.opacity = disableSpecific ? 0.5 : 1; // Grey out label
+                    });
+                }
+
+                wapitiAllModulesCheckbox.addEventListener('change', toggleWapitiModules);
+                toggleWapitiModules(); // Initial check
+            }
+
+        });
+    </script>
+</body>
+
+</html>
