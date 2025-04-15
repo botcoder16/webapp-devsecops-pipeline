@@ -1,21 +1,17 @@
-# app/routes.py (Modified V4 - Async Scan & Status Check)
-from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, jsonify, session
+# app/routes.py (Modified V5 - SSE for Scan Completion)
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, jsonify, Response, session
 import subprocess
 import json
 import os
-import sys # Import sys to get executable path
+import sys
 import logging
-import time # For potential cleanup logic
+import time # Import time for sleep in SSE
 
 main_bp = Blueprint("main", __name__)
-
-# Configure logging for Flask app context if not already done in __init__.py
-# logging.basicConfig(level=logging.INFO) # Or use Flask's logger: current_app.logger
 
 # --- Helper ---
 def get_report_path():
     """Gets the absolute path to the final report file."""
-    # Assuming run.py is in the project root, and app is a subdirectory
     final_report_relative_path = os.path.join("core", "combine", "final_alerts.json")
     return os.path.join(current_app.root_path, "..", final_report_relative_path)
 
@@ -24,12 +20,8 @@ def get_report_path():
 def index():
     if request.method == "POST":
         # !!! IMPORTANT: Ensure Flask app has a SECRET_KEY set for flash() to work !!!
-        # Example in your app/__init__.py or run.py:
-        # import os
-        # app.config['SECRET_KEY'] = os.urandom(24) # Or a static secret string
-
         try:
-            # --- Collect form data (Same as previous version) ---
+            # --- Collect form data (Same as previous version V3) ---
             options = {
                 "target_url": request.form.get("target_url"), # Required
                 "selected_tools": {
@@ -84,7 +76,6 @@ def index():
                 else: options["wapiti_modules"] = request.form.getlist("wapiti_modules")
             # --- End Collect form data ---
 
-
             # --- Validate required fields ---
             if not options["target_url"]:
                  try: flash("Target URL is required.", "error")
@@ -95,11 +86,9 @@ def index():
                  except RuntimeError as e: current_app.logger.error(f"Flash failed (SECRET_KEY missing?): {e}")
                  return render_template("form.html")
 
-            # Convert options dict to JSON string for main.py argument
             options_json_string = json.dumps(options)
             current_app.logger.info(f"Prepared options for main.py: {options_json_string}")
 
-            # --- Get main.py path ---
             main_script_path = os.path.join(current_app.root_path, "..", "main.py")
             current_app.logger.info(f"Attempting to run script: {main_script_path} using {sys.executable}")
 
@@ -117,32 +106,22 @@ def index():
                     current_app.logger.info(f"Removed old report file: {report_path}")
                 except OSError as e:
                     current_app.logger.error(f"Error removing old report file {report_path}: {e}")
-                    # Decide if this is critical - maybe proceed anyway?
 
             # --- Start main.py script in the background ---
             try:
-                # Use Popen to run asynchronously
                 process = subprocess.Popen(
                     [sys.executable, main_script_path, options_json_string],
-                    stdout=subprocess.PIPE, # Capture stdout/stderr if needed for logging
-                    stderr=subprocess.PIPE,
-                    text=True,
-                    # Set appropriate working directory if main.py relies on it
-                    # cwd=os.path.dirname(main_script_path) # Example: Run from script's dir
+                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
                 )
                 current_app.logger.info(f"Started background scan process with PID: {process.pid}")
-                # Don't wait for completion here (process.wait() or process.communicate())
 
-                # --- Redirect to results page immediately ---
-                try: flash("Scan started successfully! Results will appear below when ready.", "info")
+                # Store that a scan is running (optional, could use file existence)
+                session['scan_running'] = True # Requires SECRET_KEY
+
+                try: flash("Scan started successfully! Results page will update when ready.", "info")
                 except RuntimeError as e: current_app.logger.error(f"Flash failed (SECRET_KEY missing?): {e}")
                 return redirect(url_for("main.results"))
 
-            except FileNotFoundError:
-                 try: flash(f"Error: Python executable not found at {sys.executable}.", "error")
-                 except RuntimeError as e: current_app.logger.error(f"Flash failed (SECRET_KEY missing?): {e}")
-                 current_app.logger.error(f"Python executable not found: {sys.executable}")
-                 return render_template("form.html")
             except Exception as e:
                  try: flash(f"An error occurred while trying to start the scan: {e}", "error")
                  except RuntimeError as re: current_app.logger.error(f"Flash failed (SECRET_KEY missing?): {re}")
@@ -150,74 +129,105 @@ def index():
                  return render_template("form.html")
 
         except Exception as e:
-             # Catch errors during form processing itself
              try: flash(f"Error processing form data: {e}", "error")
              except RuntimeError as re: current_app.logger.error(f"Flash failed (SECRET_KEY missing?): {re}")
              current_app.logger.exception("Error processing form data in index route")
              return render_template("form.html")
 
     # === GET request ===
-    # Just render the form template
     return render_template("form.html")
 
 @main_bp.route("/results")
 def results():
     """
-    Renders the results page. Initially, it might show a placeholder.
-    JavaScript on the page will poll /scan_status to check for completion.
+    Renders the results page. Tries to load results for initial display.
+    If results aren't ready, the template will connect to /scan_events.
     """
-    # !!! IMPORTANT: Ensure Flask app has a SECRET_KEY set for flash() to work !!!
+    # !!! IMPORTANT: Ensure Flask app has a SECRET_KEY set for session/flash() !!!
     current_app.logger.info("Accessing /results page.")
-    # Try to load results immediately in case the user refreshes after completion
     report_path = get_report_path()
     results_data = None
     scan_error = None
+    is_running = session.get('scan_running', False) # Check if we think a scan is running
+
     try:
         if os.path.exists(report_path):
+            # If file exists, assume scan finished (or failed and left a file)
+            is_running = False
+            session.pop('scan_running', None) # Clear flag if file found
             with open(report_path, 'r', encoding='utf-8') as f:
                 results_data = json.load(f)
             current_app.logger.info("Loaded existing results data on /results load.")
+        # else: scan is potentially still running if flag is set
+
     except json.JSONDecodeError:
         current_app.logger.error(f"Found results file {report_path} but it's invalid JSON.")
         scan_error = "Result file is present but invalid. Scan may have failed."
-        # Optionally delete the corrupt file
-        # try: os.remove(report_path)
-        # except OSError: pass
+        is_running = False # Treat as finished/failed
+        session.pop('scan_running', None)
     except Exception as e:
         current_app.logger.exception("Error loading initial results data:")
         scan_error = f"An error occurred loading results: {e}"
+        is_running = False # Treat as finished/failed
+        session.pop('scan_running', None)
 
-    # Pass results_data (which might be None) and error status to the template
-    return render_template("output.html", results=results_data, scan_error=scan_error)
+    # Pass results_data, error status, and running status to the template
+    return render_template("output.html",
+                           results=results_data,
+                           scan_error=scan_error,
+                           scan_initially_running=is_running and not results_data and not scan_error)
 
 
-@main_bp.route("/scan_status")
-def scan_status():
+@main_bp.route('/scan_events')
+def scan_events():
     """
-    API endpoint for JavaScript to poll. Checks if the results file exists.
+    Server-Sent Events endpoint. Monitors the results file and notifies the client.
     """
+    current_app.logger.info("SSE connection established.")
     report_path = get_report_path()
-    current_app.logger.debug(f"Checking scan status, report path: {report_path}")
 
-    if os.path.exists(report_path):
+    def generate():
         try:
-            # Optional: Check file age or basic JSON validity
-            # file_mod_time = os.path.getmtime(report_path)
-            # Check if file is reasonably recent?
+            while True:
+                if os.path.exists(report_path):
+                    current_app.logger.info(f"SSE: Report file found at {report_path}. Checking validity.")
+                    try:
+                        # Check if file is valid JSON
+                        with open(report_path, 'r', encoding='utf-8') as f:
+                            json.load(f)
+                        # File exists and is valid JSON - signal completion
+                        current_app.logger.info("SSE: Report file valid. Sending scan_complete event.")
+                        yield "event: scan_complete\ndata: done\n\n"
+                        session.pop('scan_running', None) # Clear running flag
+                        break # Stop sending events for this connection
+                    except json.JSONDecodeError:
+                        current_app.logger.warning("SSE: Report file exists but is invalid JSON. Sending error event.")
+                        yield f"event: scan_error\ndata: Result file is invalid\n\n"
+                        session.pop('scan_running', None) # Clear running flag
+                        break # Stop sending events
+                    except Exception as e:
+                         current_app.logger.error(f"SSE: Error reading report file: {e}")
+                         yield f"event: scan_error\ndata: Error checking result file\n\n"
+                         session.pop('scan_running', None) # Clear running flag
+                         break # Stop sending events
+                else:
+                    # File not found, send a comment to keep connection alive (optional)
+                    # yield ": keepalive\n\n"
+                    current_app.logger.debug("SSE: Report file not found. Waiting...")
+                    pass # Keep waiting
 
-            # Try loading JSON to ensure it's complete and valid
-            with open(report_path, 'r', encoding='utf-8') as f:
-                json.load(f) # Just try to load it
-            current_app.logger.debug("Scan status: completed (file exists and is valid JSON).")
-            # Don't return full results here, just status. Page will reload.
-            return jsonify({"status": "completed"})
-        except json.JSONDecodeError:
-            current_app.logger.warning(f"Scan status: error (file exists but invalid JSON - {report_path}).")
-            return jsonify({"status": "error", "message": "Result file is invalid."})
+                # Wait before checking again
+                time.sleep(5) # Check every 5 seconds
+        except GeneratorExit:
+             current_app.logger.info("SSE connection closed by client.")
         except Exception as e:
-            current_app.logger.error(f"Scan status: error (checking file failed: {e}).")
-            return jsonify({"status": "error", "message": f"Error checking result file: {e}"})
-    else:
-        current_app.logger.debug("Scan status: running (file does not exist).")
-        return jsonify({"status": "running"})
+             current_app.logger.error(f"SSE: Error during event generation: {e}")
+        finally:
+             current_app.logger.info("SSE event stream finished.")
+
+    # Return the generator function wrapped in a Response object
+    return Response(generate(), mimetype='text/event-stream')
+
+# Remove the old /scan_status endpoint if it exists
+# @main_bp.route("/scan_status") ...
 
