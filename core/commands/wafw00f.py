@@ -16,6 +16,6 @@ def generate_wafw00f_command(options):
     wafw00f_command.append("-a")
     wafw00f_command.append("-r")
         
-    wafw00f_command.extend(["-o", "~/scan_results/wafw00f_scan.json"])
+    wafw00f_command.extend(["-o", "scan_results/wafw00f_scan.json"])
     # Return the generated command as a string
     return " ".join(wafw00f_command)

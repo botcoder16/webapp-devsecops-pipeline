@@ -1,0 +1,22 @@
+{
+  "wapiti": {
+    "status": "skipped",
+    "reason": "Command not provided"
+  },
+  "nuclei": {
+    "status": "skipped",
+    "reason": "Command not provided"
+  },
+  "wafw00f": {
+    "status": "skipped",
+    "reason": "Command not provided"
+  },
+  "whatweb": {
+    "status": "skipped",
+    "reason": "Command not provided"
+  },
+  "nikto": {
+    "status": "nikto scan completed successfully",
+    "output_file": "nikto_scan.xml"
+  }
+}

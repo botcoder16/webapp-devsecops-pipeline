@@ -1,247 +1,359 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scan Status & Results</title> {# Updated Title #}
-    <style>
-        body { font-family: sans-serif; line-height: 1.6; padding: 20px; background-color: #f8f9fa; }
-        .container { max-width: 900px; margin: 20px auto; background-color: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h1, h2, h3 { color: #333; }
-        h1 { text-align: center; margin-bottom: 30px; color: #007bff; } /* Style main heading */
-        h2 { background-color: #e9ecef; padding: 10px 15px; border-left: 5px solid #6c757d; margin-top: 30px; border-radius: 4px; font-size: 1.3em; } /* Adjusted section header */
-        h3 { color: #0056b3; margin-top: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 6px; font-size: 1.15em; } /* Tool name header */
-        .alert-item { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; background-color: #fff; border-radius: 4px; overflow: hidden; } /* Added overflow */
-        .alert-name { font-weight: bold; color: #c82333; font-size: 1.1em; margin-bottom: 10px; }
-        .alert-details dt { font-weight: bold; color: #495057; width: 130px; float: left; clear: left; padding-right: 10px; margin-bottom: 8px; } /* Added margin-bottom */
-        .alert-details dd { margin-left: 140px; margin-bottom: 8px; color: #343a40; }
-        .alert-details ul { list-style: disc; margin-left: 160px; padding-left: 20px; margin-top: -5px; margin-bottom: 8px; } /* Added margin-bottom */
-        .code { background-color: #e9ecef; padding: 2px 5px; border-radius: 3px; font-family: monospace; font-size: 0.9em; }
-        pre { background-color: #f8f9fa; border: 1px solid #dee2e6; padding: 10px; border-radius: 4px; white-space: pre-wrap; word-wrap: break-word; font-family: monospace; font-size: 0.9em; max-height: 200px; overflow-y: auto; } /* Added max-height and scroll */
-        .severity-high { border-left: 5px solid #dc3545; } /* Bootstrap danger red */
-        .severity-medium { border-left: 5px solid #ffc107; } /* Bootstrap warning yellow */
-        .severity-low { border-left: 5px solid #17a2b8; } /* Bootstrap info teal */
-        .severity-info { border-left: 5px solid #6c757d; } /* Bootstrap secondary grey */
-        .tool-section { margin-left: 20px; padding-bottom: 10px; }
-        .scan-status { text-align: center; padding: 40px 20px; border: 2px dashed #17a2b8; border-radius: 8px; background-color: #e2f8fC; margin-bottom: 30px; } /* Adjusted colors */
-        .scan-status p { font-size: 1.2em; color: #0c5460; margin: 0; } /* Adjusted colors */
-        .scan-status .spinner {
-             border: 4px solid rgba(0, 0, 0, 0.1);
-             width: 36px;
-             height: 36px;
-             border-radius: 50%;
-             border-left-color: #17a2b8; /* Match border color */
-             margin: 15px auto 0 auto;
-             animation: spin 1s ease infinite;
-        }
-        @keyframes spin {
-             0% { transform: rotate(0deg); }
-             100% { transform: rotate(360deg); }
-        }
-        .error-message { color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 15px; border-radius: 5px; text-align: center; }
-        .hidden { display: none; } /* Utility class */
-        .results-link { display: block; text-align: center; margin-top: 30px; } /* Increased margin */
-        .results-link a { color: #007bff; text-decoration: none; font-weight: 600; }
-        .results-link a:hover { text-decoration: underline; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scan Status & Results</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      line-height: 1.6;
+      padding: 20px;
+      background-color: #f8f9fa;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 20px auto;
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1, h2, h3 {
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #007bff;
+    }
+
+    h2 {
+      background-color: #e9ecef;
+      padding: 10px 15px;
+      border-left: 5px solid #6c757d;
+      margin-top: 30px;
+      border-radius: 4px;
+      font-size: 1.3em;
+    }
+
+    h3 {
+      color: #0056b3;
+      margin-top: 25px;
+      border-bottom: 1px solid #dee2e6;
+      padding-bottom: 6px;
+      font-size: 1.15em;
+    }
+
+    .alert-item {
+      border: 1px solid #ddd;
+      padding: 15px;
+      margin-bottom: 15px;
+      background-color: #fff;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .alert-name {
+      font-weight: bold;
+      color: #c82333;
+      font-size: 1.1em;
+      margin-bottom: 10px;
+    }
+
+    .alert-details dt {
+      font-weight: bold;
+      color: #495057;
+      width: 130px;
+      float: left;
+      clear: left;
+      padding-right: 10px;
+      margin-bottom: 8px;
+    }
+
+    .alert-details dd {
+      margin-left: 140px;
+      margin-bottom: 8px;
+      color: #343a40;
+    }
+
+    .alert-details::after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+
+    .alert-details ul {
+      list-style: disc;
+      margin-left: 160px;
+      padding-left: 20px;
+      margin-top: -5px;
+      margin-bottom: 8px;
+    }
+
+    .code {
+      background-color: #e9ecef;
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-family: monospace;
+      font-size: 0.9em;
+    }
+
+    pre {
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      padding: 10px;
+      border-radius: 4px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-family: monospace;
+      font-size: 0.9em;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .severity-high {
+      border-left: 5px solid #dc3545;
+    }
+
+    .severity-medium {
+      border-left: 5px solid #ffc107;
+    }
+
+    .severity-low {
+      border-left: 5px solid #17a2b8;
+    }
+
+    .severity-info {
+      border-left: 5px solid #6c757d;
+    }
+
+    .tool-section {
+      margin-left: 20px;
+      padding-bottom: 10px;
+    }
+
+    .scan-status {
+      text-align: center;
+      padding: 40px 20px;
+      border: 2px dashed #17a2b8;
+      border-radius: 8px;
+      background-color: #e2f8fc;
+      margin-bottom: 30px;
+    }
+
+    .scan-status p {
+      font-size: 1.2em;
+      color: #0c5460;
+      margin: 0;
+    }
+
+    .scan-status .spinner {
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border-left-color: #17a2b8;
+      margin: 15px auto 0 auto;
+      animation: spin 1s ease infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .error-message {
+      color: #721c24;
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+      padding: 15px;
+      border-radius: 5px;
+      text-align: center;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .results-link {
+      display: block;
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .results-link a {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .results-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        {# --- Conditional Heading --- #}
-        <h1>
-            {# Check both results and scan_initially_running flag from Flask #}
-            {% if results and results|length > 0 %}
-                Scan Results
-            {% else %}
-                Scan Status
-            {% endif %}
-        </h1>
+  <div class="container">
+    <h1>Scan Status</h1>
 
-        {# Show initially if scan_initially_running is true and no error #}
-        <div id="scan-status-message" class="scan-status {% if not scan_initially_running or scan_error %}hidden{% endif %}">
-             <p>Scan in progress, please wait...</p>
-             <div class="spinner"></div>
-             <p><small>This page will automatically update when the results are ready.</small></p>
-        </div>
-         {# Show if scan_error exists #}
-         <div id="scan-error-message" class="error-message {% if not scan_error %}hidden{% endif %}">
-             {{ scan_error | default('An unknown error occurred.', true) }}
-         </div>
-
-        {# Show if results exist #}
-        <div id="results-content" class="{% if not results or results|length == 0 %}hidden{% endif %}">
-            {% if results and results|length > 0 %}
-                {# --- Jinja loop to display results (same as previous version) --- #}
-                {% for category, tools in results.items() %}
-                    {% set category_has_alerts = false %}
-                    {% for tool_name, alerts in tools.items() %}
-                        {% if alerts and alerts|length > 0 %}{% set category_has_alerts = true %}{% endif %}
-                    {% endfor %}
-                    {% if category_has_alerts %}
-                        <h2>{{ category }}</h2>
-                        {% for tool_name, alerts in tools.items() %}
-                            {% if alerts and alerts|length > 0 %}
-                                <div class="tool-section">
-                                   <h3>{{ tool_name }}</h3>
-                                   {% for alert in alerts %}
-                                       {% set severity = alert.severity if alert.severity is defined else alert.risk if alert.risk is defined else 'info' %}
-                                       {% set severity_lower = severity|string|lower %}
-                                       {% set severity_class = 'severity-' + severity_lower if severity_lower in ['high', 'medium', 'low', 'info'] else 'severity-info' %}
-                                       <div class="alert-item {{ severity_class }}">
-                                           <p class="alert-name">{{ alert.name | default(alert.alert | default("Unknown Alert")) }}</p>
-                                           <dl class="alert-details">
-                                            <dt>Severity/Risk:</dt><dd>{{ severity | capitalize }}</dd>
-                                            {% if alert.confidence is defined %}<dt>Confidence:</dt><dd>{{ alert.confidence }}</dd>{% endif %}
-                                            {% if alert.description is defined %}<dt>Description:</dt><dd>{{ alert.description | safe }}</dd>{% endif %}
-                                            {% if alert.issue_background is defined %}<dt>Background:</dt><dd>{{ alert.issue_background | safe }}</dd>{% endif %}
-                                            {% if alert.remediation_background is defined %}<dt>Remediation:</dt><dd>{{ alert.remediation_background | safe }}</dd>{% endif %}
-                                            {% if alert.solution is defined %}<dt>Solution:</dt><dd>{{ alert.solution | safe }}</dd>{% endif %}
-                                            {% if alert.reference is defined and alert.reference %}<dt>Reference:</dt><dd>{{ alert.reference | replace('\n', '<br>') | safe }}</dd>{% endif %}
-                                            {% if alert.origin is defined %}<dt>Origin:</dt><dd>{{ alert.origin }}</dd>{% endif %}
-                                            {% if alert.type_index is defined %}<dt>Type Index:</dt><dd>{{ alert.type_index }}</dd>{% endif %}
-                                            {% if alert.level is defined %}<dt>Level:</dt><dd>{{ alert.level }}</dd>{% endif %}
-                                            {% if alert.parameter is defined and alert.parameter %}<dt>Parameter:</dt><dd class="code">{{ alert.parameter }}</dd>{% endif %}
-                                            {% if alert.info is defined and alert.info %}<dt>Info:</dt><dd>{{ alert.info }}</dd>{% endif %}
-                                            
-                                            {% if alert.paths is defined and alert.paths %}
-                                                <dt>Paths:</dt>
-                                                <dd>
-                                                    <ul>
-                                                        {% for path in alert.paths %}
-                                                            <li>{{ path }}</li>
-                                                        {% endfor %}
-                                                    </ul>
-                                                </dd>
-                                            {% endif %}
-                                            {% if alert.urls is defined and alert.urls %}
-                                                <dt>URLs:</dt>
-                                                <dd>
-                                                    <ul>
-                                                        {% for url in alert.urls %}
-                                                            <li>{{ url }}</li>
-                                                        {% endfor %}
-                                                    </ul>
-                                                </dd>
-                                            {% endif %}
-                                            {% if alert.url is defined and alert.url %}
-                                                <dt>URL:</dt>
-                                                <dd>{{ alert.url }}</dd>
-                                            {% endif %}
-                                        
-                                            {% if alert.curl_command is defined and alert.curl_command %}
-                                                <dt>Curl Command:</dt><dd><pre>{{ alert.curl_command }}</pre></dd>
-                                            {% endif %}
-                                            {% if alert.http_request is defined and alert.http_request %}
-                                                <dt>HTTP Request:</dt><dd><pre>{{ alert.http_request }}</pre></dd>
-                                            {% endif %}
-                                        </dl>
-                                       </div>
-                                   {% endfor %}
-                                </div>
-                            {% endif %}
-                        {% endfor %} {# End tool loop #}
-                    {% endif %} {# End category_has_alerts check #}
-                {% endfor %} {# End category loop #}
-             {% elif not scan_error and not scan_initially_running %}
-                  {# Only show this if no results, no error, and not initially running #}
-                 <div id="initial-placeholder">
-                     <p>No results to display currently. Please start a new scan.</p>
-                 </div>
-            {% endif %} {# End results check #}
-        </div>
-
-        <div class="results-link">
-             <a href="{{ url_for('main.index') }}">Run New Scan</a>
-        </div>
+    <div id="scan-status-message" class="scan-status hidden">
+      <p>Scan in progress, please wait...</p>
+      <div class="spinner"></div>
+      <p><small>This page will automatically update when the results are ready.</small></p>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const statusDiv = document.getElementById('scan-status-message');
-            const errorDiv = document.getElementById('scan-error-message');
-            const resultsDiv = document.getElementById('results-content');
+    <div id="scan-error-message" class="error-message {% if not scan_error %}hidden{% endif %}">
+      {{ scan_error | default('An unknown error occurred.', true) }}
+    </div>
 
-            // Check if Flask initially rendered results content
-            const hasRenderedResults = resultsDiv.querySelector('.alert-item') !== null;
-            // Check if Flask passed the flag indicating scan was running when page loaded
-            const isScanInitiallyRunning = JSON.parse('{{ scan_initially_running | tojson | safe }}');
-            // Check if Flask passed an error message
-            const initialError = JSON.parse('{{ scan_error | tojson | safe }}');
+    <div id="results-content" class="hidden"></div>
 
-            let eventSource = null; // To store the EventSource object
+    <div class="results-link">
+      <a href="{{ url_for('main.index') }}">Run New Scan</a>
+    </div>
+  </div>
 
-            function connectSSE() {
-                console.log("Connecting to SSE endpoint...");
-                // Ensure results are hidden and status is shown while connecting/waiting
-                resultsDiv.classList.add('hidden');
-                errorDiv.classList.add('hidden');
-                statusDiv.classList.remove('hidden'); // Show spinner/message
+  <script>
+    const data = {{ results | safe }};
+    const scanError = {{ scan_error | tojson }};
+    const scanInitiallyRunning = {{ scan_initially_running | tojson }};
+    const resultsDiv = document.getElementById('results-content');
 
-                eventSource = new EventSource("{{ url_for('main.scan_events') }}"); // Connect to the SSE endpoint
+    if (scanError) {
+      document.getElementById("scan-error-message").classList.remove("hidden");
+    }
 
-                // Listener for the 'scan_complete' event from server
-                eventSource.addEventListener('scan_complete', function(event) {
-                    console.log("SSE: scan_complete event received", event.data);
-                    if (eventSource) eventSource.close(); // Close the connection
-                    console.log("SSE connection closed. Reloading page...");
-                    window.location.reload(); // Reload to show results rendered by Flask
-                });
+    function renderResults(data) {
+      if (!data || Object.keys(data).length === 0) {
+        resultsDiv.innerHTML = '<p>No scan results found. Please start a new scan.</p>';
+        resultsDiv.classList.remove("hidden");
+        return;
+      }
 
-                 // Listener for the 'scan_error' event from server
-                 eventSource.addEventListener('scan_error', function(event) {
-                    console.log("SSE: scan_error event received", event.data);
-                    if (eventSource) eventSource.close(); // Close the connection
-                    statusDiv.classList.add('hidden');
-                    resultsDiv.classList.add('hidden'); // Ensure results stay hidden
-                    errorDiv.textContent = `Scan failed or results are invalid: ${event.data || 'Unknown error'}`;
-                    errorDiv.classList.remove('hidden'); // Show error message
-                 });
+      document.querySelector("h1").innerText = "Scan Results";
+      resultsDiv.classList.remove("hidden");
 
-                // Handle general errors with the SSE connection
-                eventSource.onerror = function(error) {
-                    console.error("EventSource failed:", error);
-                    // If the connection fails definitively, show an error and stop trying
-                    if (eventSource && (eventSource.readyState === EventSource.CLOSED)) {
-                         console.log("SSE connection definitively closed due to error.");
-                         statusDiv.classList.add('hidden');
-                         errorDiv.textContent = 'Connection to scan status updates failed. Please try running the scan again.';
-                         errorDiv.classList.remove('hidden');
-                    }
-                    // Browser might attempt auto-reconnect on some errors,
-                    // so we might not want to immediately show a persistent error here.
-                };
+      for (const category in data) {
+        const tools = data[category];
+        let hasAlerts = false;
+
+        for (const tool in tools) {
+          if (tools[tool] && tools[tool].length > 0) {
+            hasAlerts = true;
+            break;
+          }
+        }
+
+        if (!hasAlerts) continue;
+
+        const catElem = document.createElement("h2");
+        catElem.textContent = category;
+        resultsDiv.appendChild(catElem);
+
+        for (const tool in tools) {
+          const alerts = tools[tool];
+          if (!alerts || alerts.length === 0) continue;
+
+          const toolDiv = document.createElement("div");
+          toolDiv.classList.add("tool-section");
+
+          const toolHeader = document.createElement("h3");
+          toolHeader.textContent = tool;
+          toolDiv.appendChild(toolHeader);
+
+          alerts.forEach(alert => {
+            const severity = (alert.severity || "info").toLowerCase();
+            const severityClass = ["high", "medium", "low", "info"].includes(severity)
+              ? `severity-${severity}`
+              : "severity-info";
+
+            const alertDiv = document.createElement("div");
+            alertDiv.classList.add("alert-item", severityClass);
+
+            const titleElem = document.createElement("p");
+            titleElem.classList.add("alert-name");
+            titleElem.textContent = alert.title || "Unknown Alert";
+            alertDiv.appendChild(titleElem);
+
+            const dl = document.createElement("dl");
+
+            const addField = (label, value) => {
+              const dt = document.createElement("dt");
+              dt.textContent = label;
+              const dd = document.createElement("dd");
+              dd.innerHTML = value;
+              dl.appendChild(dt);
+              dl.appendChild(dd);
+            };
+
+            addField("Severity:", alert.severity || "Info");
+            if (alert.confidence) addField("Confidence:", alert.confidence);
+            if (alert.description) addField("Description:", alert.description);
+            if (alert.background) addField("Background:", alert.background);
+            if (alert.remediation) addField("Remediation:", alert.remediation);
+            if (alert.reference) addField("Reference:", alert.reference.replace(/\n/g, "<br>"));
+            if (alert.origin) addField("Origin:", alert.origin);
+            if (alert.type_index !== undefined) addField("Type Index:", alert.type_index);
+            if (alert.parameter) addField("Parameter:", `<code>${alert.parameter}</code>`);
+
+            if (alert.urls && alert.urls.length > 0) {
+              const urlList = alert.urls.map(u => `<li>${u}</li>`).join("");
+              addField("URLs:", `<ul>${urlList}</ul>`);
             }
 
-            // --- Initial Page Setup ---
-            if (hasRenderedResults) {
-                // Results already loaded by Flask, show them and don't connect to SSE
-                console.log("Initial results found (rendered). Displaying content.");
-                resultsDiv.classList.remove('hidden');
-                statusDiv.classList.add('hidden');
-                errorDiv.classList.add('hidden');
-            } else if (initialError) {
-                 // An error occurred during initial load (e.g., corrupt file found)
-                 console.log("Initial error found:", initialError);
-                 resultsDiv.classList.add('hidden');
-                 statusDiv.classList.add('hidden');
-                 errorDiv.classList.remove('hidden'); // Error message already set by Flask
-            } else if (isScanInitiallyRunning) {
-                // No results, no initial error, and Flask indicated a scan was running
-                console.log("No initial results, scan was running. Connecting to SSE.");
-                connectSSE(); // Connect to SSE to wait for completion
-            } else {
-                 // No results, no error, scan not running -> Show placeholder message
-                 console.log("No initial results, scan not running.");
-                 resultsDiv.classList.add('hidden'); // Keep results hidden
-                 statusDiv.classList.add('hidden'); // Hide status spinner
-                 errorDiv.classList.add('hidden');
-                 // Display a placeholder message if results div is empty
-                 if (!resultsDiv.hasChildNodes() || resultsDiv.textContent.trim() === '') {
-                    resultsDiv.innerHTML = '<p id="initial-placeholder">No results to display currently. Please start a new scan.</p>';
-                    resultsDiv.classList.remove('hidden'); // Show the placeholder message
-                 }
+            if (alert.paths && alert.paths.length > 0) {
+              const pathList = alert.paths.map(p => `<li>${p}</li>`).join("");
+              addField("Paths:", `<ul>${pathList}</ul>`);
             }
-        });
-    </script>
+
+            if (alert.curl_command) {
+              addField("Curl Command:", `<pre>${alert.curl_command}</pre>`);
+            }
+
+            if (alert.http_request) {
+              addField("HTTP Request:", `<pre>${alert.http_request}</pre>`);
+            }
+
+            alertDiv.appendChild(dl);
+            toolDiv.appendChild(alertDiv);
+          });
+
+          resultsDiv.appendChild(toolDiv);
+        }
+      }
+    }
+
+    if (!scanInitiallyRunning) {
+      renderResults(data);
+    } else {
+      document.getElementById("scan-status-message").classList.remove("hidden");
+      const eventSource = new EventSource("{{ url_for('main.scan_events') }}");
+
+      eventSource.addEventListener("scan_complete", function () {
+        eventSource.close();
+        location.reload();
+      });
+
+      eventSource.addEventListener("scan_error", function (event) {
+        eventSource.close();
+        document.getElementById("scan-status-message").classList.add("hidden");
+        const err = document.getElementById("scan-error-message");
+        err.textContent = event.data || "An error occurred.";
+        err.classList.remove("hidden");
+      });
+
+      eventSource.onerror = function () {
+        eventSource.close();
+        document.getElementById("scan-status-message").classList.add("hidden");
+        const err = document.getElementById("scan-error-message");
+        err.textContent = "Connection lost.";
+        err.classList.remove("hidden");
+      };
+    }
+  </script>
 </body>
 </html>

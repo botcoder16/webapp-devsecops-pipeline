@@ -8,7 +8,7 @@ def generate_nikto_command(options):
     # Output file (JSON format)
     if "output_format" in options and options["output_format"] == "json":
         nikto_command.extend(["-Format", "xml"])
-        nikto_command.extend(["-o", "~/scan_results/nikto_scan.xml"])
+        nikto_command.extend(["-o", "scan_results/nikto_scan.xml"])
     # Verbosity
     if "verbose" in options and options["verbose"]:
         nikto_command.append("-v")
@@ -21,7 +21,7 @@ def generate_nikto_command(options):
     if "auth_credentials" in options:
         nikto_command.extend(["-id", options["auth_credentials"]])
 
-    if "wapiti_disable_ssl_verify" in options:
+    if options["disable_ssl_verify"] == True:
         nikto_command.append("-nossl")
     else:
         nikto_command.append("-ssl")
