@@ -3,7 +3,7 @@
     "status": "skipped",
     "reason": "Command not provided"
   },
-  "nuclei": {
+  "nikto": {
     "status": "skipped",
     "reason": "Command not provided"
   },
@@ -15,8 +15,8 @@
     "status": "skipped",
     "reason": "Command not provided"
   },
-  "nikto": {
-    "status": "nikto scan completed successfully",
-    "output_file": "nikto_scan.xml"
+  "nuclei": {
+    "status": "nuclei scan command ran (code 0), but expected output file missing.",
+    "output_stdout": "http://testphp.vulnweb.com/ | hakrawler -d 40 | grep = | nuclei -je -o scan_results/nuclei_scan.json -t ~/nuclei-templates/dast/vulnerabilities/ -dast -headless -s critical,high,medium"
   }
 }

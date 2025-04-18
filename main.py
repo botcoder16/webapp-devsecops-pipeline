@@ -97,7 +97,7 @@ def run_api_scan(options):
         # --- Execute API Request ---
         response = None # Initialize response
         try:
-            response = requests.post(API_URL, json=payload, headers={"Content-Type": "application/json"}, stream=True, timeout=300) # Use stream=True for zip, adjust timeout
+            response = requests.post(API_URL, json=payload, headers={"Content-Type": "application/json"}, stream=True) # Use stream=True for zip, adjust timeout
             response.raise_for_status() # Raise HTTPError for bad responses (4xx or 5xx)
 
         except requests.exceptions.Timeout:
