@@ -265,7 +265,7 @@ def index():
                 if request.form.get("wapiti_all_modules") == "on":
                     # Wapiti might expect specific format like '-a' or similar in command generator
                     # Let's pass 'all' and let the command generator handle it.
-                    options["wapiti_modules"] = ["all"]
+                    options["wapiti_modules"] = "all"
                 else:
                     options["wapiti_modules"] = request.form.getlist("wapiti_modules")
 

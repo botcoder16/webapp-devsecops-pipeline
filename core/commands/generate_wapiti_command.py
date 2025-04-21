@@ -37,7 +37,7 @@ def generate_wapiti_command(options):
             wapiti_command.extend([flag, options[key]])
 
     # Modules (if specified)
-    if options.get("wapiti_modules") != 'all':
+    if options.get("wapiti_modules") != "all":
         wapiti_command.extend(["-m", ",".join(options["wapiti_modules"])])
 
     # Miscellaneous flags

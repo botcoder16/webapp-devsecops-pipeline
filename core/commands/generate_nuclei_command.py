@@ -1,11 +1,11 @@
 def generate_nuclei_command(options):
     # Initialize Nuclei command
-    nuclei_command = ["echo", options["target_url"], "|", "hakrawler", "-d", options["max_depth"], "|", "grep", "="]
+    nuclei_command = ["echo", options["target_url"], "|", "/home/tool_backend/go/bin/hakrawler", "-d", options["max_depth"], "|", "grep", "="]
     nuclei_command.extend(["|","nuclei"])
 
     # Output file (JSON format)
     if options.get("output_format") == "json":
-        nuclei_command.extend(["-je", "-o", "scan_results/nuclei_scan.json"])
+        nuclei_command.extend(["-j", "-o", "~/scan_results/nuclei_scan.json"])
 
     # Template selection
     

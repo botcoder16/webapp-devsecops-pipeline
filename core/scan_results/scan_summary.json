@@ -16,7 +16,7 @@
     "reason": "Command not provided"
   },
   "nuclei": {
-    "status": "nuclei scan command ran (code 0), but expected output file missing.",
-    "output_stdout": "http://testphp.vulnweb.com/ | hakrawler -d 40 | grep = | nuclei -je -o scan_results/nuclei_scan.json -t ~/nuclei-templates/dast/vulnerabilities/ -dast -headless -s critical,high,medium"
+    "status": "nuclei scan completed successfully",
+    "output_file": "nuclei_scan.json"
   }
 }

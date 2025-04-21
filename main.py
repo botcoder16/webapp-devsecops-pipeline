@@ -31,7 +31,7 @@ PARSERS_DIR = os.path.join(SCRIPT_DIR, "core", "parsers")
 VULN_DIR = os.path.join(COMBINE_DIR, "vulnerabilities") # Output dir for parsers
 FINAL_REPORT_PATH = os.path.join(COMBINE_DIR, "final_alerts.json")
 
-API_URL = "http://192.168.111.134:5000/scan" # Adjust if needed
+API_URL = "http://192.168.6.144:5000/scan" # Adjust if needed
 API_ZIP_FILENAME = "api_scan_results.zip" # Name for the received zip
 SCAN_SUMMARY_FILENAME = "scan_summary.json" # Expected summary file in the zip
 
