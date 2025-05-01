@@ -7,15 +7,16 @@ import io      # Added for handling zip in memory if needed, but file better
 from concurrent.futures import ThreadPoolExecutor
 import logging
 import requests # Keep requests for API calls
+import time # For timing if needed
 
-# --- Core Command/Scanner Imports ---
+# --- Core Command Generation Imports (Scanners Removed) ---
 from core.commands.generate_nuclei_command import generate_nuclei_command
 from core.commands.generate_wapiti_command import generate_wapiti_command
 from core.commands.nikto import generate_nikto_command
 from core.commands.wafw00f import generate_wafw00f_command
 from core.commands.whatweb import generate_whatweb_command
-from core.scanner.zap_scan import execute_zap_scan
-from core.scanner.burp_pro_scan import execute_burp_scan
+# REMOVED: from core.scanner.zap_scan import execute_zap_scan
+# REMOVED: from core.scanner.burp_pro_scan import execute_burp_scan
 
 # --- Configuration ---
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s',handlers=[
@@ -31,9 +32,14 @@ PARSERS_DIR = os.path.join(SCRIPT_DIR, "core", "parsers")
 VULN_DIR = os.path.join(COMBINE_DIR, "vulnerabilities") # Output dir for parsers
 FINAL_REPORT_PATH = os.path.join(COMBINE_DIR, "final_alerts.json")
 
-API_URL = "http://192.168.6.144:5000/scan" # Adjust if needed
-API_ZIP_FILENAME = "api_scan_results.zip" # Name for the received zip
-SCAN_SUMMARY_FILENAME = "scan_summary.json" # Expected summary file in the zip
+# --- API URLs and Filenames ---
+UBUNTU_API_URL = "http://192.168.6.144:5000/scan" # URL for Ubuntu API (Nuclei, Wapiti, etc.)
+WINDOWS_API_URL = "http://192.168.6.147:5001/scan" # URL for Windows API (Burp, ZAP)
+
+# Using distinct names for received zip files for clarity
+UBUNTU_API_ZIP_FILENAME = "ubuntu_api_scan_results.zip"
+WINDOWS_API_ZIP_FILENAME = "windows_api_scan_results.zip"
+SCAN_SUMMARY_FILENAME = "scan_summary.json" # Expected summary file name inside zips
 
 # --- Helper Function ---
 def ensure_dir(directory_path):
@@ -41,328 +47,410 @@ def ensure_dir(directory_path):
     os.makedirs(directory_path, exist_ok=True)
 
 
-# --- Scan Execution Functions (Modified for consistent output paths) ---
+# --- Scan Execution Functions (API Calls Only) ---
 
-def run_api_scan(options):
+def run_ubuntu_api_scan(options):
     """
-    Execute API scan with options, expecting a zip file in return.
+    Execute Ubuntu API scan (Nuclei, Wapiti, etc.) with options, expecting a zip file in return.
     Extracts the zip and parses scan_summary.json to determine results.
     """
+    logging.info("[UBUNTU API] Starting Ubuntu tools scan...")
+    selected_tools = options.get("selected_tools", {})
+    commands = {}
+    requested_api_tools = []
+
+    # Ensure base output directory exists
+    ensure_dir(OUTPUT_DIR)
+    api_zip_path = os.path.join(OUTPUT_DIR, UBUNTU_API_ZIP_FILENAME) # Use specific name
+
+    # --- Generate Commands ONLY for Ubuntu tools ---
+    if selected_tools.get("use_nuclei"):
+        commands["nuclei"] = generate_nuclei_command(options)
+        requested_api_tools.append("nuclei")
+        logging.info(f"[UBUNTU API] Generated Nuclei command")
+
+    if selected_tools.get("use_wapiti"):
+        commands["wapiti"] = generate_wapiti_command(options)
+        requested_api_tools.append("wapiti")
+        logging.info(f"[UBUNTU API] Generated Wapiti command")
+
+    if selected_tools.get("use_nikto"):
+        commands["nikto"] = generate_nikto_command(options)
+        requested_api_tools.append("nikto")
+        logging.info(f"[UBUNTU API] Generated Nikto command")
+
+    if selected_tools.get("use_wafw00f"):
+        commands["wafw00f"] = generate_wafw00f_command(options)
+        requested_api_tools.append("wafw00f")
+        logging.info(f"[UBUNTU API] Generated Wafw00f command")
+
+    if selected_tools.get("use_whatweb"):
+        commands["whatweb"] = generate_whatweb_command(options)
+        requested_api_tools.append("whatweb")
+        logging.info(f"[UBUNTU API] Generated WhatWeb command")
+
+    # If no tools for this API are selected, skip the call
+    if not commands:
+        logging.warning("[UBUNTU API] No Ubuntu API tools selected or commands generated.")
+        return {'status': 'skipped', 'reason': 'No Ubuntu API tools selected', 'output_files': {}, 'api_source': 'ubuntu'}
+
+    payload = {"commands": commands}
+    logging.info(f"[UBUNTU API] Sending payload to {UBUNTU_API_URL} for tools: {list(commands.keys())}")
+
+    # --- Execute API Request ---
+    response = None
     try:
-        logging.info("[API] Starting API tools scan...")
-        selected_tools = options.get("selected_tools", {})
-        commands = {}
-        requested_api_tools = [] # Keep track of tools we asked the API to run
+        # Use the correct URL and a reasonable timeout for these tools
+        response = requests.post(UBUNTU_API_URL, json=payload, headers={"Content-Type": "application/json"}, stream=True, timeout=600) # 10 min timeout
+        response.raise_for_status()
 
-        # Ensure base output directory exists
-        ensure_dir(OUTPUT_DIR)
-        api_zip_path = os.path.join(OUTPUT_DIR, API_ZIP_FILENAME)
+    except requests.exceptions.Timeout:
+        logging.error("[UBUNTU API] Scan request timed out.")
+        return {'status': 'failed', 'error': 'Ubuntu API request timed out', 'output_files': {}, 'api_source': 'ubuntu'}
+    except requests.exceptions.RequestException as e:
+        error_text = getattr(e.response, 'text', 'No response text') if e.response is not None else 'No response object'
+        logging.error(f"[UBUNTU API] Scan request failed: {e}")
+        logging.error(f"[UBUNTU API] Response Text: {error_text}")
+        return {'status': 'failed', 'error': f"Ubuntu API error: {e}", 'response': error_text, 'output_files': {}, 'api_source': 'ubuntu'}
 
-        # --- Generate Commands (Paths are now less critical here, as summary dictates final path) ---
-        # We still generate commands, but primarily to tell the *server* what to run.
-        # The *client* will rely on scan_summary.json for actual output paths later.
-        if selected_tools.get("use_nuclei"):
-            commands["nuclei"] = generate_nuclei_command(options)
-            requested_api_tools.append("nuclei")
-            logging.info(f"[API] Generated Nuclei command") # Command details logged by server
+    # --- Process API Response (EXPECTING ZIP) ---
+    logging.info("[UBUNTU API] Scan request successful (Status Code {}). Receiving results zip...".format(response.status_code))
 
-        if selected_tools.get("use_wapiti"):
-            commands["wapiti"] = generate_wapiti_command(options)
-            requested_api_tools.append("wapiti")
-            logging.info(f"[API] Generated Wapiti command")
+    # Save the zip file (using the specific name)
+    try:
+        with open(api_zip_path, 'wb') as f:
+            for chunk in response.iter_content(chunk_size=8192):
+                f.write(chunk)
+        logging.info(f"[UBUNTU API] Saved results zip to: {api_zip_path}")
+    except Exception as e:
+        logging.exception(f"[UBUNTU API] Failed to save response zip file:")
+        return {'status': 'failed', 'error': f'Failed to save Ubuntu API zip: {e}', 'output_files': {}, 'api_source': 'ubuntu'}
 
-        if selected_tools.get("use_nikto"):
-            commands["nikto"] = generate_nikto_command(options)
-            requested_api_tools.append("nikto")
-            logging.info(f"[API] Generated Nikto command")
+    # --- Extract the zip file and parse summary ---
+    extracted_files = {} # Stores tool_name -> absolute_path
+    api_scan_status = 'completed' # Assume success unless summary indicates otherwise
+    api_errors = []
+    extract_target_dir = OUTPUT_DIR # Extract to the main results dir
 
-        if selected_tools.get("use_wafw00f"):
-            commands["wafw00f"] = generate_wafw00f_command(options)
-            requested_api_tools.append("wafw00f")
-            logging.info(f"[API] Generated Wafw00f command")
+    try:
+        with zipfile.ZipFile(api_zip_path, 'r') as zip_ref:
+            logging.info(f"[UBUNTU API] Extracting zip file contents to: {extract_target_dir}")
+            zip_ref.extractall(extract_target_dir)
+            logging.info("[UBUNTU API] Zip extraction complete.")
 
-        if selected_tools.get("use_whatweb"):
-            commands["whatweb"] = generate_whatweb_command(options)
-            requested_api_tools.append("whatweb")
-            logging.info(f"[API] Generated WhatWeb command")
+            # Check for scan_summary.json immediately after extraction
+            summary_path = os.path.join(extract_target_dir, SCAN_SUMMARY_FILENAME)
+            if not os.path.exists(summary_path):
+                 logging.error(f"[UBUNTU API] Critical error: {SCAN_SUMMARY_FILENAME} not found in the extracted zip from {UBUNTU_API_URL}.")
+                 # Depending on requirements, you might want to attempt to continue or fail hard.
+                 # Let's return failure for now.
+                 return {'status': 'failed', 'error': f'{SCAN_SUMMARY_FILENAME} missing in Ubuntu API response zip', 'output_files': {}, 'api_source': 'ubuntu'}
 
+            # Parse the summary
+            with open(summary_path, 'r') as f_summary:
+                scan_summary = json.load(f_summary)
+            logging.info(f"[UBUNTU API] Successfully parsed {SCAN_SUMMARY_FILENAME} from Ubuntu zip.")
 
-        if not commands:
-            logging.warning("[API] No API tools selected or commands generated.")
-            return {'status': 'skipped', 'reason': 'No API tools selected', 'output_files': {}}
+            # Process summary results
+            for tool_name, result_info in scan_summary.items():
+                 tool_status = result_info.get('status', '').lower()
+                 output_file = result_info.get('output_file') # Relative path within zip
+                 reason = result_info.get('reason')
 
-        payload = {"commands": commands}
-        logging.info(f"[API] Sending payload to API for tools: {list(commands.keys())}")
+                 logging.info(f"[UBUNTU API Summary] Tool: {tool_name}, Status: {tool_status}")
 
-        # --- Execute API Request ---
-        response = None # Initialize response
-        try:
-            response = requests.post(API_URL, json=payload, headers={"Content-Type": "application/json"}, stream=True) # Use stream=True for zip, adjust timeout
-            response.raise_for_status() # Raise HTTPError for bad responses (4xx or 5xx)
-
-        except requests.exceptions.Timeout:
-            logging.error("[API] Scan request timed out.")
-            return {'status': 'failed', 'error': 'API request timed out', 'output_files': {}}
-        except requests.exceptions.RequestException as e:
-            error_text = getattr(e.response, 'text', 'No response text') if e.response is not None else 'No response object'
-            logging.error(f"[API] Scan request failed: {e}")
-            logging.error(f"[API] Response Text: {error_text}")
-            return {'status': 'failed', 'error': f"API error: {e}", 'response': error_text, 'output_files': {}}
-
-        # --- Process API Response (EXPECTING ZIP) ---
-        logging.info("[API] Scan request successful (Status Code {}). Receiving results zip...".format(response.status_code))
-
-        # Save the zip file
-        try:
-            with open(api_zip_path, 'wb') as f:
-                for chunk in response.iter_content(chunk_size=8192):
-                    f.write(chunk)
-            logging.info(f"[API] Saved results zip to: {api_zip_path}")
-        except Exception as e:
-            logging.exception(f"[API] Failed to save response zip file:")
-            return {'status': 'failed', 'error': f'Failed to save zip: {e}', 'output_files': {}}
-
-        # Extract the zip file and parse summary
-        extracted_files = {}
-        api_scan_status = 'completed' # Assume success unless summary indicates otherwise
-        api_errors = []
-
-        try:
-            with zipfile.ZipFile(api_zip_path, 'r') as zip_ref:
-                logging.info(f"[API] Extracting zip file contents to: {OUTPUT_DIR}")
-                zip_ref.extractall(OUTPUT_DIR)
-                logging.info("[API] Zip extraction complete.")
-
-                # Check for scan_summary.json
-                summary_path = os.path.join(OUTPUT_DIR, SCAN_SUMMARY_FILENAME)
-                if not os.path.exists(summary_path):
-                    logging.error(f"[API] Critical error: {SCAN_SUMMARY_FILENAME} not found in the extracted zip.")
-                    return {'status': 'failed', 'error': f'{SCAN_SUMMARY_FILENAME} missing in API response zip', 'output_files': {}}
-
-                # Parse the summary
-                with open(summary_path, 'r') as f_summary:
-                    scan_summary = json.load(f_summary)
-                logging.info(f"[API] Successfully parsed {SCAN_SUMMARY_FILENAME}")
-
-                # Process summary results
-                # --- Inside the zip summary parsing logic ---
-                for tool_name, result_info in scan_summary.items():
-                    tool_status = result_info.get('status', '').lower()
-                    output_file = result_info.get('output_file')
-                    reason = result_info.get('reason')
-
-                    logging.info(f"[API Summary] Tool: {tool_name}, Status: {tool_status}")
-
-                    # Check if the tool completed successfully
-                    if "completed" in tool_status and "successfully" in tool_status:
-                        if output_file:
-                            absolute_output_path = os.path.join(OUTPUT_DIR, output_file) \
-                                if not os.path.isabs(output_file) else output_file
-
-                            if os.path.exists(absolute_output_path):
-                                extracted_files[tool_name] = absolute_output_path
-                                logging.info(f"  Output: {absolute_output_path} (Exists: True)")
-                            else:
-                                logging.warning(f"  Output file listed for {tool_name} but not found: {absolute_output_path}")
-                                api_scan_status = 'completed_with_errors'
-                                api_errors.append(f"{tool_name}: output file missing ({absolute_output_path})")
-                        else:
-                            logging.warning(f"  {tool_name} reported success but no output_file specified.")
-                            api_scan_status = 'completed_with_errors'
-                            api_errors.append(f"{tool_name}: no output_file provided")
-                    else:
-                        logging.info(f"  Tool {tool_name} was skipped or did not complete successfully.")
-                        if reason:
-                            api_errors.append(f"{tool_name}: {reason}")
+                 if "completed" in tool_status and "successfully" in tool_status:
+                     if output_file:
+                         # Construct absolute path based on where it was extracted
+                         absolute_output_path = os.path.join(extract_target_dir, output_file)
+                         if os.path.exists(absolute_output_path):
+                             extracted_files[tool_name] = absolute_output_path # Store absolute path
+                             logging.info(f"  Output: {absolute_output_path} (Exists: True)")
+                         else:
+                             logging.warning(f"  [UBUNTU API] Output file listed for {tool_name} but not found after extraction: {absolute_output_path}")
+                             api_scan_status = 'completed_with_errors'
+                             api_errors.append(f"{tool_name}: output file missing ({absolute_output_path})")
+                     else:
+                         logging.warning(f"  [UBUNTU API] {tool_name} reported success but no output_file specified.")
+                         api_scan_status = 'completed_with_errors'
+                         api_errors.append(f"{tool_name}: no output_file provided")
+                 else:
+                     logging.info(f"  [UBUNTU API] Tool {tool_name} was skipped or did not complete successfully.")
+                     if reason:
+                         api_errors.append(f"{tool_name}: {reason}")
+                     # Only mark as error if it wasn't explicitly skipped
+                     if tool_status != 'skipped':
                         api_scan_status = 'completed_with_errors'
-                        
-                        
-        except zipfile.BadZipFile:
-            logging.error(f"[API] Invalid zip file received from API.")
-            return {'status': 'failed', 'error': 'Invalid zip file received', 'output_files': {}}
-        except json.JSONDecodeError:
-            logging.error(f"[API] Failed to parse {SCAN_SUMMARY_FILENAME}.")
-            return {'status': 'failed', 'error': f'Invalid {SCAN_SUMMARY_FILENAME}', 'output_files': {}}
-        except FileNotFoundError as e:
-             logging.error(f"[API] File not found during zip processing: {e}")
-             return {'status': 'failed', 'error': f'File not found: {e}', 'output_files': {}}
-        except Exception as e:
-            logging.exception(f"[API] Error processing zip file or summary:")
-            return {'status': 'failed', 'error': f'Zip/Summary processing error: {e}', 'output_files': {}}
 
-        # --- Final Result ---
-        # Clean up the zip file? Optional.
-        # try:
-        #     os.remove(api_zip_path)
-        #     logging.info(f"[API] Removed temporary zip file: {api_zip_path}")
-        # except OSError as e:
-        #     logging.warning(f"[API] Could not remove temporary zip file {api_zip_path}: {e}")
+            # Optionally remove the summary file after processing if concerned about conflicts
+            # try:
+            #     os.remove(summary_path)
+            # except OSError:
+            #     logging.warning(f"[UBUNTU API] Could not remove summary file {summary_path} after processing.")
 
 
-        final_result = {
-            'status': api_scan_status,
-            'output_dir': OUTPUT_DIR,
-            'output_files': extracted_files,
-        }
-
-        if api_errors:
-            final_result['errors'] = api_errors
-
-        logging.info(f"[API] Final extracted files for parsing: {list(extracted_files.keys())}")
-        return final_result
-
-
+    except zipfile.BadZipFile:
+        logging.error(f"[UBUNTU API] Invalid zip file received from Ubuntu API.")
+        return {'status': 'failed', 'error': 'Invalid zip file received from Ubuntu API', 'output_files': {}, 'api_source': 'ubuntu'}
+    except json.JSONDecodeError:
+        logging.error(f"[UBUNTU API] Failed to parse {SCAN_SUMMARY_FILENAME} from Ubuntu API zip.")
+        return {'status': 'failed', 'error': f'Invalid {SCAN_SUMMARY_FILENAME} from Ubuntu API', 'output_files': {}, 'api_source': 'ubuntu'}
+    except FileNotFoundError as e:
+         logging.error(f"[UBUNTU API] File not found during zip processing: {e}")
+         return {'status': 'failed', 'error': f'File not found in Ubuntu API zip processing: {e}', 'output_files': {}, 'api_source': 'ubuntu'}
     except Exception as e:
-        logging.exception("[API] Unexpected error during API scan initiation or processing:") # Log full traceback
-        return {'status': 'error', 'error': str(e), 'output_files': {}} # Return empty output_files on major error
+        logging.exception(f"[UBUNTU API] Error processing zip file or summary:")
+        return {'status': 'failed', 'error': f'Ubuntu API Zip/Summary processing error: {e}', 'output_files': {}, 'api_source': 'ubuntu'}
+
+    # --- Final Result for this API call ---
+    final_result = {
+        'status': api_scan_status,
+        'output_dir': extract_target_dir, # The directory where files were extracted
+        'output_files': extracted_files, # Dict of tool -> absolute_path
+        'api_source': 'ubuntu' # Add identifier
+    }
+    if api_errors:
+        final_result['errors'] = api_errors
+
+    logging.info(f"[UBUNTU API] Final extracted files for parsing: {list(extracted_files.keys())}")
+    return final_result
+
+# --- NEW FUNCTION for Windows API ---
+def run_windows_api_scan(options):
+    """
+    Execute Windows API scan (Burp, ZAP) with options, expecting a zip file in return.
+    Extracts the zip and parses scan_summary.json to determine results.
+    """
+    logging.info("[WINDOWS API] Starting Windows tools scan (Burp/ZAP)...")
+    selected_tools = options.get("selected_tools", {})
+    target_url = options.get("target_url") # Needed for payload
+
+    # --- Prepare Payload for Windows API ---
+    # The Windows API expects the full options relevant to Burp/ZAP
+    payload = {
+        "target_url": target_url,
+        "selected_tools": { # Only include tools this API handles
+            "use_zap": selected_tools.get("use_zap", False),
+            "use_burp": selected_tools.get("use_burp", False),
+        },
+        # Include necessary configurations directly from the main options
+        "zap_scan_policy": options.get('zap_scan_policy'),
+        "zap_delay": options.get('zap_delay'),
+        "zap_threads": options.get('zap_threads'),
+        "zap_credentials": options.get('zap_credentials'), # Pass if present
+        "burp_scan_config": options.get('burp_scan_config'),
+        "burp_credentials": options.get('burp_credentials'), # Pass if present
+        # Add any other general options the Windows API might need (if any)
+        # e.g., "timeout": options.get("timeout")
+    }
+    # Remove None values from payload as the Windows API might not expect them
+    payload = {k: v for k, v in payload.items() if v is not None}
+    # Ensure selected_tools sub-dict is present, even if empty
+    if "selected_tools" not in payload: payload["selected_tools"] = {}
 
 
-def run_zap_scan(zap_config):
-    """Execute ZAP scan with configuration derived from input JSON"""
+    # Check if any tools are actually selected for this API before making the call
+    if not payload["selected_tools"].get("use_zap") and not payload["selected_tools"].get("use_burp"):
+         logging.warning("[WINDOWS API] No Windows API tools (Burp/ZAP) selected.")
+         # Return skipped status, important not to make the HTTP call
+         return {'status': 'skipped', 'reason': 'No Windows API tools selected', 'output_files': {}, 'api_source': 'windows'}
+
+
+    logging.info(f"[WINDOWS API] Sending payload to {WINDOWS_API_URL}: {json.dumps(payload)}")
+
+    # Ensure base output directory exists
+    ensure_dir(OUTPUT_DIR)
+    api_zip_path = os.path.join(OUTPUT_DIR, WINDOWS_API_ZIP_FILENAME) # Use specific name
+
+    # --- Execute API Request ---
+    response = None
     try:
-        logging.info("[ZAP] Starting ZAP scan...")
-        if not zap_config or 'target_url' not in zap_config or not zap_config['target_url']:
-            logging.error("[ZAP] Insufficient ZAP configuration provided (target_url missing or empty).")
-            return {'status': 'failed', 'error': 'Insufficient ZAP configuration (target_url missing)'}
-        if 'report_path' not in zap_config or not zap_config['report_path']:
-             logging.error("[ZAP] ZAP report path not configured.")
-             return {'status': 'failed', 'error': 'ZAP report_path missing'}
+        # Burp/ZAP can take a very long time. Use a significantly longer timeout.
+        # 7200 seconds = 2 hours. Adjust as needed.
+        response = requests.post(WINDOWS_API_URL, json=payload, headers={"Content-Type": "application/json"}, stream=True, timeout=7200)
+        response.raise_for_status()
 
-        # Ensure output directory exists
-        ensure_dir(os.path.dirname(zap_config['report_path']))
-        logging.info(f"[ZAP] Report will be saved to: {zap_config['report_path']}")
+    except requests.exceptions.Timeout:
+        logging.error("[WINDOWS API] Scan request timed out.")
+        return {'status': 'failed', 'error': 'Windows API request timed out', 'output_files': {}, 'api_source': 'windows'}
+    except requests.exceptions.RequestException as e:
+        error_text = getattr(e.response, 'text', 'No response text') if e.response is not None else 'No response object'
+        logging.error(f"[WINDOWS API] Scan request failed: {e}")
+        logging.error(f"[WINDOWS API] Response Text: {error_text}")
+        return {'status': 'failed', 'error': f"Windows API error: {e}", 'response': error_text, 'output_files': {}, 'api_source': 'windows'}
 
-        result = execute_zap_scan(zap_config) # execute_zap_scan needs zap_config dict
+    # --- Process API Response (EXPECTING ZIP) ---
+    logging.info("[WINDOWS API] Scan request successful (Status Code {}). Receiving results zip...".format(response.status_code))
 
-        # Add the output file path to the result for consistency
-        if result.get('status') == 'completed':
-            result['output_files'] = {'zap': zap_config['report_path']}
-            logging.info(f"[ZAP] Scan completed. Report: {zap_config['report_path']}")
-        else:
-            result['output_files'] = {}
-            logging.error(f"[ZAP] Scan failed or did not complete. Status: {result.get('status')}, Error: {result.get('error')}")
-
-
-        return result
-
-    except Exception as e:
-        logging.exception("[ZAP] Error during ZAP scan:")
-        return {'status': 'error', 'error': str(e), 'output_files': {}}
-
-def run_burp_scan(burp_config):
-    """Execute Burp scan with configuration derived from input JSON"""
+    # Save the zip file
     try:
-        logging.info("[BURP] Starting Burp scan...")
-        if not burp_config or 'target_url' not in burp_config or not burp_config['target_url']:
-            logging.error("[BURP] Insufficient Burp configuration provided (target_url missing or empty).")
-            return {'status': 'failed', 'error': 'Insufficient Burp configuration (target_url missing)'}
-        if 'report_path' not in burp_config or not burp_config['report_path']:
-             logging.error("[BURP] Burp report path not configured.")
-             return {'status': 'failed', 'error': 'Burp report_path missing'}
-
-
-        # Ensure output directory exists
-        ensure_dir(os.path.dirname(burp_config['report_path']))
-        logging.info(f"[BURP] Report will be saved to: {burp_config['report_path']}")
-
-        result = execute_burp_scan(burp_config) # execute_burp_scan needs burp_config dict
-
-        # Add the output file path to the result for consistency
-        if result.get('status') == 'completed':
-            result['output_files'] = {'burp': burp_config['report_path']}
-            logging.info(f"[BURP] Scan completed. Report: {burp_config['report_path']}")
-        else:
-            result['output_files'] = {}
-            logging.error(f"[BURP] Scan failed or did not complete. Status: {result.get('status')}, Error: {result.get('error')}")
-
-        return result
-
+        with open(api_zip_path, 'wb') as f:
+            for chunk in response.iter_content(chunk_size=8192):
+                f.write(chunk)
+        logging.info(f"[WINDOWS API] Saved results zip to: {api_zip_path}")
     except Exception as e:
-        logging.exception("[BURP] Error during Burp scan:")
-        return {'status': 'error', 'error': str(e), 'output_files': {}}
+        logging.exception(f"[WINDOWS API] Failed to save response zip file:")
+        return {'status': 'failed', 'error': f'Failed to save Windows API zip: {e}', 'output_files': {}, 'api_source': 'windows'}
+
+    # --- Extract the zip file and parse summary ---
+    extracted_files = {} # Stores tool_name -> absolute_path
+    api_scan_status = 'completed'
+    api_errors = []
+    extract_target_dir = OUTPUT_DIR # Extract to the same main results dir
+
+    try:
+        with zipfile.ZipFile(api_zip_path, 'r') as zip_ref:
+            logging.info(f"[WINDOWS API] Extracting zip file contents to: {extract_target_dir}")
+            zip_ref.extractall(extract_target_dir)
+            logging.info("[WINDOWS API] Zip extraction complete.")
+
+            # Check for scan_summary.json immediately after extraction
+            summary_path = os.path.join(extract_target_dir, SCAN_SUMMARY_FILENAME)
+            if not os.path.exists(summary_path):
+                logging.error(f"[WINDOWS API] Critical error: {SCAN_SUMMARY_FILENAME} not found in the extracted zip from {WINDOWS_API_URL}.")
+                return {'status': 'failed', 'error': f'{SCAN_SUMMARY_FILENAME} missing in Windows API response zip', 'output_files': {}, 'api_source': 'windows'}
+
+            # Parse the summary
+            with open(summary_path, 'r') as f_summary:
+                scan_summary = json.load(f_summary)
+            logging.info(f"[WINDOWS API] Successfully parsed {SCAN_SUMMARY_FILENAME} from Windows zip.")
+
+            # Process summary results
+            for tool_name, result_info in scan_summary.items():
+                tool_status = result_info.get('status', '').lower()
+                output_file = result_info.get('output_file') # Relative path within zip
+                reason = result_info.get('reason')
+
+                logging.info(f"[WINDOWS API Summary] Tool: {tool_name}, Status: {tool_status}")
+
+                if "completed" in tool_status and "successfully" in tool_status:
+                    if output_file:
+                        # Construct absolute path based on where it was extracted
+                        absolute_output_path = os.path.join(extract_target_dir, output_file)
+                        if os.path.exists(absolute_output_path):
+                            extracted_files[tool_name] = absolute_output_path # Store absolute path
+                            logging.info(f"  Output: {absolute_output_path} (Exists: True)")
+                        else:
+                            logging.warning(f"  [WINDOWS API] Output file listed for {tool_name} but not found after extraction: {absolute_output_path}")
+                            api_scan_status = 'completed_with_errors'
+                            api_errors.append(f"{tool_name}: output file missing ({absolute_output_path})")
+                    else:
+                        logging.warning(f"  [WINDOWS API] {tool_name} reported success but no output_file specified.")
+                        api_scan_status = 'completed_with_errors'
+                        api_errors.append(f"{tool_name}: no output_file provided")
+                else:
+                    logging.info(f"  [WINDOWS API] Tool {tool_name} was skipped or did not complete successfully.")
+                    if reason:
+                        api_errors.append(f"{tool_name}: {reason}")
+                    if tool_status != 'skipped':
+                        api_scan_status = 'completed_with_errors'
+
+            # Optionally remove the summary file after processing
+            # try:
+            #     os.remove(summary_path)
+            # except OSError:
+            #     logging.warning(f"[WINDOWS API] Could not remove summary file {summary_path} after processing.")
 
 
-# --- NEW: Parsing and Combining Functions ---
-# (No changes needed in run_parsers or run_combiner itself,
-# as they rely on the 'output_files' dictionary being correctly
-# populated by the run_*_scan functions based on scan success)
+    except zipfile.BadZipFile:
+        logging.error(f"[WINDOWS API] Invalid zip file received from Windows API.")
+        return {'status': 'failed', 'error': 'Invalid zip file received from Windows API', 'output_files': {}, 'api_source': 'windows'}
+    except json.JSONDecodeError:
+        logging.error(f"[WINDOWS API] Failed to parse {SCAN_SUMMARY_FILENAME} from Windows API zip.")
+        return {'status': 'failed', 'error': f'Invalid {SCAN_SUMMARY_FILENAME} from Windows API', 'output_files': {}, 'api_source': 'windows'}
+    except FileNotFoundError as e:
+         logging.error(f"[WINDOWS API] File not found during zip processing: {e}")
+         return {'status': 'failed', 'error': f'File not found in Windows API zip processing: {e}', 'output_files': {}, 'api_source': 'windows'}
+    except Exception as e:
+        logging.exception(f"[WINDOWS API] Error processing zip file or summary:")
+        return {'status': 'failed', 'error': f'Windows API Zip/Summary processing error: {e}', 'output_files': {}, 'api_source': 'windows'}
 
-def run_parsers(scan_results):
+    # --- Final Result for this API call ---
+    final_result = {
+        'status': api_scan_status,
+        'output_dir': extract_target_dir,
+        'output_files': extracted_files, # Dict of tool -> absolute_path
+        'api_source': 'windows' # Add identifier
+    }
+    if api_errors:
+        final_result['errors'] = api_errors
+
+    logging.info(f"[WINDOWS API] Final extracted files for parsing: {list(extracted_files.keys())}")
+    return final_result
+
+
+# --- Parsing and Combining Functions ---
+
+# MODIFIED: Accepts a dictionary of successful outputs directly
+def run_parsers(all_successful_output_files):
     """Runs the necessary parsers on the generated scan output files."""
     logging.info("=== Running Parsers ===")
     ensure_dir(VULN_DIR)
     parser_success = True
     any_parser_run = False
 
-    # Define parser mappings: tool_name -> (parser_script, input_suffix_ignored, output_suffix)
-    # Input suffix isn't strictly needed anymore as we use the exact path from scan_results
+    # Define parser mappings: tool_name -> (parser_script, output_suffix)
     parser_map = {
         "zap": ("zap_parser.py", "vulnerabilities_zap.json"),
         "burp": ("burp_parser.py", "vulnerabilities_burp.json"),
         "wapiti": ("wapiti_parser.py", "vulnerabilities_wapiti.json"),
         "nuclei": ("nuclei_parser.py", "vulnerabilities_nuclei.json"),
-         # Add other parsers here if needed (e.g., nikto, whatweb)
-        "nikto": ("nikto_parser.py", "vulnerabilities_nikto.json"), # Example
-        "whatweb": ("whatweb_parser.py", "vulnerabilities_whatweb.json"), # Example
-        "wafw00f": ("wafw00f_parser.py", "vulnerabilities_wafw00f.json"), # Example
+        "nikto": ("nikto_parser.py", "vulnerabilities_nikto.json"),
+        "whatweb": ("whatweb_parser.py", "vulnerabilities_whatweb.json"),
+        "wafw00f": ("wafw00f_parser.py", "vulnerabilities_wafw00f.json"),
     }
 
-    all_successful_output_files = {}
-    for result in scan_results:
-        # Only consider results from completed scans that might have output files
-        if result.get('status') in ['completed', 'completed_with_errors', 'succeeded'] and result.get('output_files'):
-            all_successful_output_files.update(result.get('output_files', {}))
-
+    # Use the dictionary passed directly
     if not all_successful_output_files:
         logging.warning("No successful scan outputs found to parse.")
         return True # Not a failure if there was nothing to parse
 
-    logging.info(f"Attempting to parse files: {all_successful_output_files}")
+    logging.info(f"Attempting to parse files for tools: {list(all_successful_output_files.keys())}")
 
     for tool, (parser_script, output_suffix) in parser_map.items():
+        # Check if the tool exists as a key in the successful outputs dict
         if tool in all_successful_output_files:
-            input_file = all_successful_output_files[tool] # Get the exact path
+            input_file = all_successful_output_files[tool] # Get the absolute path
             parser_path = os.path.join(PARSERS_DIR, parser_script)
-            output_file = os.path.join(VULN_DIR, output_suffix)
+            output_file = os.path.join(VULN_DIR, output_suffix) # Where parser should write
 
+            # Ensure input file and parser script exist before attempting to run
             if os.path.exists(input_file) and os.path.exists(parser_path):
                 logging.info(f"Running parser: {parser_script} on {input_file}")
                 any_parser_run = True
                 try:
                     # Use absolute paths for parser arguments
-                    cmd = ["python", parser_path, input_file, output_file]
-                    # Assumes parsers accept: script.py <input_file> <output_file>
-                    process = subprocess.run(cmd, capture_output=True, text=True, check=True, timeout=120) # Increased timeout slightly
-                    logging.info(f"Parser {parser_script} output:\n{process.stdout}")
+                    cmd = [sys.executable, parser_path, input_file, output_file] # Use sys.executable
+                    process = subprocess.run(cmd, capture_output=True, text=True, check=True, timeout=120)
+                    logging.info(f"Parser {parser_script} stdout:\n{process.stdout}")
                     if process.stderr:
                         logging.warning(f"Parser {parser_script} stderr:\n{process.stderr}")
+                    # Verify output file creation
                     if not os.path.exists(output_file):
                         logging.error(f"Parser {parser_script} ran but output file {output_file} not found!")
-                        parser_success = False # This specific parser failed
+                        parser_success = False
 
                 except subprocess.CalledProcessError as e:
                     logging.error(f"Error running parser {parser_script} on {input_file}: {e}")
                     logging.error(f"Stderr: {e.stderr}")
                     parser_success = False
                 except subprocess.TimeoutExpired:
-                    logging.error(f"Parser {parser_script} timed out.")
+                    logging.error(f"Parser {parser_script} timed out on {input_file}.")
                     parser_success = False
                 except Exception as e:
-                    logging.exception(f"Unexpected error running parser {parser_script}:")
+                    logging.exception(f"Unexpected error running parser {parser_script} on {input_file}:")
                     parser_success = False
             elif not os.path.exists(input_file):
-                # This case should be less likely now if all_successful_output_files is accurate
-                logging.warning(f"Input file {input_file} for parser {parser_script} not found, though it was expected. Skipping.")
-                # Optionally mark as error? Depends on strictness.
-                # parser_success = False
+                # This indicates an issue with the previous step storing the path
+                logging.error(f"Input file {input_file} for parser {parser_script} not found, though it was expected. Skipping.")
+                parser_success = False # Treat this as an error
             elif not os.path.exists(parser_path):
                 logging.error(f"Parser script {parser_path} not found. Cannot parse {tool} results.")
                 parser_success = False # Indicate failure if parser script is missing
-        # Don't log "skipping" for tools that weren't successful or didn't produce output
-
+        # else: tool not found in successful outputs, so skip parsing it.
 
     if not any_parser_run and all_successful_output_files:
-         logging.warning("Scan outputs were found, but no corresponding parsers were configured or available.")
+         logging.warning("Scan outputs were found, but no corresponding parsers were configured or available to run.")
          # This isn't necessarily a failure of the parsing *step*, but maybe worth noting.
 
     if not parser_success:
@@ -375,13 +463,24 @@ def run_combiner():
     """Runs the combine.py script."""
     logging.info("=== Running Combiner ===")
     combiner_script = os.path.join(COMBINE_DIR, "combine.py")
+
+    # Ensure vulnerability directory exists before checking contents
+    ensure_dir(VULN_DIR)
+
     # Check if there are any vulnerability files to combine
-    vuln_files_exist = any(f.startswith('vulnerabilities_') and f.endswith('.json') for f in os.listdir(VULN_DIR))
+    try:
+        vuln_files_exist = any(f.startswith('vulnerabilities_') and f.endswith('.json') for f in os.listdir(VULN_DIR))
+    except FileNotFoundError:
+        logging.error(f"Vulnerability directory {VULN_DIR} not found. Cannot run combiner.")
+        return False
+    except Exception as e:
+        logging.error(f"Error listing files in {VULN_DIR}: {e}")
+        return False
+
 
     if not vuln_files_exist:
-        logging.warning(f"No vulnerability files found in {VULN_DIR}. Skipping combiner.")
-        # Create an empty final report to signify completion? Or return success? Let's return success.
-        # Or maybe create an empty JSON array in final_alerts.json
+        logging.warning(f"No vulnerability files found in {VULN_DIR} to combine. Skipping combiner.")
+        # Create an empty final report to signify completion
         try:
              with open(FINAL_REPORT_PATH, 'w') as f:
                  json.dump([], f)
@@ -398,7 +497,7 @@ def run_combiner():
     try:
         # Run combine.py from the COMBINE_DIR so its relative paths work
         process = subprocess.run(
-            ["python", os.path.basename(combiner_script)], # Run script by name
+            [sys.executable, os.path.basename(combiner_script)], # Run script by name using sys.executable
             capture_output=True,
             text=True,
             check=True,
@@ -428,180 +527,151 @@ def run_combiner():
         logging.exception("Unexpected error running combiner script:")
         return False
 
-# --- Main Execution Logic ---
+# --- Main Execution Logic (MODIFIED) ---
 
 def main(options_data):
-    """Main function accepting options dictionary"""
-    ensure_dir(OUTPUT_DIR) # Ensure base output dir exists
-    ensure_dir(COMBINE_DIR) # Ensure combine dir exists
-    ensure_dir(VULN_DIR) # Ensure vuln dir exists (for parsers)
-
+    """Main function accepting options dictionary, orchestrates API calls"""
+    ensure_dir(OUTPUT_DIR)
+    ensure_dir(COMBINE_DIR)
+    ensure_dir(VULN_DIR)
 
     selected_tools = options_data.get("selected_tools", {})
-    use_api_tools = any(selected_tools.get(tool) for tool in ["use_wapiti", "use_nuclei", "use_nikto", "use_wafw00f", "use_whatweb"])
-    use_zap = selected_tools.get("use_zap", False)
-    use_burp = selected_tools.get("use_burp", False)
-
-    if not (use_api_tools or use_zap or use_burp):
-        logging.warning("No tools selected for scanning.")
-        print("{\"status\": \"no_tools_selected\"}") # Output JSON status
-        return # Exit if no tools
-
-    logging.info("=== Starting All Selected Scans ===")
-
-    # --- Prepare configurations from options_data ---
-    api_options = options_data if use_api_tools else None
-    zap_config = {}
-    burp_config = {}
     target_url = options_data.get('target_url')
 
     if not target_url:
          logging.error("Mandatory field 'target_url' is missing in options.")
-         print("{\"status\": \"missing_target_url\"}")
+         print(json.dumps({"status": "missing_target_url"})) # Use json.dumps for consistency
          return
 
-    # Construct zap_config if ZAP is selected
-    if use_zap:
-        zap_output_path = os.path.join(OUTPUT_DIR, 'zap_scan.json')
-        # Ensure the specific subdirectory for ZAP exists
-        ensure_dir(os.path.dirname(zap_output_path))
-        zap_config = {
-            'target_url': target_url,
-            'scan_policy': options_data.get('zap_scan_policy', 'Default Policy'),
-            'delay_in_ms': int(options_data.get('zap_delay', 100)),
-            'threads_per_host': int(options_data.get('zap_threads', 5)),
-            'credentials': options_data.get('zap_credentials'), # Will be None if not provided
-            'report_path': zap_output_path # Use absolute path
-        }
-        logging.info(f"ZAP Config prepared for: {zap_config.get('target_url')}")
+    # --- Determine which tools go to which API ---
+    ubuntu_tools_selected = any(selected_tools.get(tool) for tool in ["use_wapiti", "use_nuclei", "use_nikto", "use_wafw00f", "use_whatweb"])
+    windows_tools_selected = any(selected_tools.get(tool) for tool in ["use_zap", "use_burp"])
 
+    if not (ubuntu_tools_selected or windows_tools_selected):
+        logging.warning("No tools selected for scanning.")
+        print(json.dumps({"status": "no_tools_selected"}))
+        return
 
-    # Construct burp_config if Burp is selected
-    if use_burp:
-        burp_output_path = os.path.join(OUTPUT_DIR, 'burp_scan.json')
-        # Ensure the specific subdirectory for Burp exists
-        ensure_dir(os.path.dirname(burp_output_path))
-        burp_config = {
-            'target_url': target_url,
-            'scan_config': { # Use the nested structure expected by burp scanner
-                 "name": options_data.get('burp_scan_config', 'Crawl and Audit - Balanced'),
-                 "type": "NamedConfiguration"
-            },
-            'credentials': options_data.get('burp_credentials'), # Will be None if not provided
-            'report_path': burp_output_path # Use absolute path
-        }
-        logging.info(f"Burp Config prepared for: {burp_config.get('target_url')}")
+    logging.info("=== Starting All Selected Scans via APIs ===")
 
-
-    # --- Execute scans concurrently ---
-    scan_results = []
-    with ThreadPoolExecutor(max_workers=3) as executor:
+    # --- Execute scans concurrently via APIs ---
+    scan_results = [] # This will hold result dictionaries from BOTH APIs
+    with ThreadPoolExecutor(max_workers=2) as executor: # Max workers = number of APIs
         futures = []
-        if use_api_tools and api_options:
-            futures.append(executor.submit(run_api_scan, api_options))
-        if use_zap:
-            # Validate config slightly before submitting
-            if zap_config.get('target_url') and zap_config.get('report_path'):
-                futures.append(executor.submit(run_zap_scan, zap_config))
-            else:
-                logging.error("Skipping ZAP execution due to configuration errors.")
-                scan_results.append({'status': 'config_error', 'error': 'ZAP config invalid', 'output_files': {}})
-        if use_burp:
-             # Validate config slightly before submitting
-            if burp_config.get('target_url') and burp_config.get('report_path'):
-                futures.append(executor.submit(run_burp_scan, burp_config))
-            else:
-                 logging.error("Skipping Burp execution due to configuration errors.")
-                 scan_results.append({'status': 'config_error', 'error': 'Burp config invalid', 'output_files': {}})
 
+        # Submit task for Ubuntu API if needed
+        if ubuntu_tools_selected:
+            # Pass the full options_data, the function will generate relevant commands
+            futures.append(executor.submit(run_ubuntu_api_scan, options_data))
+            logging.info("Submitted task for Ubuntu API tools.")
 
-        # Collect results
+        # Submit task for Windows API if needed
+        if windows_tools_selected:
+            # Pass the full options_data, the function will construct the payload
+            futures.append(executor.submit(run_windows_api_scan, options_data))
+            logging.info("Submitted task for Windows API tools (Burp/ZAP).")
+
+        # Collect results from completed futures
         for future in futures:
             try:
-                result = future.result()
+                result = future.result() # Get the dictionary returned by the API function
                 scan_results.append(result)
             except Exception as exc:
-                logging.exception(f'Scan task generated an exception:') # Log full traceback
-                scan_results.append({'status': 'error', 'error': f'Future result exception: {exc}', 'output_files': {}})
+                # This catches errors in the future execution itself (rare)
+                logging.exception(f'API Scan task generated an unexpected exception:')
+                # Add a generic error marker; specific API function should log details
+                scan_results.append({'status': 'error', 'error': f'API Future result exception: {exc}', 'output_files': {}, 'api_source': 'unknown'})
 
-
-    # --- Report Scan Results ---
-    logging.info("\n=== Scan Execution Summary ===")
-    any_scan_failed = False # Track if *any* scan step reported failure/error
-    any_scan_completed = False # Track if at least one scan produced usable results
+    # --- Report Scan Results (Consolidated) ---
+    logging.info("\n=== API Scan Execution Summary ===")
+    any_scan_failed = False
+    any_scan_completed_with_output = False # Track if at least one scan produced usable output files
+    all_output_files = {} # Collect all successful outputs (tool_name -> absolute_path)
 
     for result in scan_results:
         status = result.get('status', 'unknown')
-        tool_name = "Unknown Scan Task"
-        # Determine tool name based on keys in output_files or other markers
-        if 'output_files' in result and result['output_files']:
-             keys = list(result['output_files'].keys())
-             if len(keys) == 1:
-                 tool_name = keys[0].capitalize() + " Scan"
-             else: # Likely the API scan result with multiple files
-                 tool_name = "API Scan"
-        elif 'alerts_count' in result: tool_name = "ZAP Scan" # ZAP might not have output_files on failure
-        elif 'issues_count' in result: tool_name = "Burp Scan" # Burp might not have output_files on failure
-        elif 'reason' in result and 'No API tools selected' in result['reason']: tool_name = "API Scan (Skipped)"
-        elif status == 'config_error': tool_name = "Scan Config Error" # Generic for config issues before running
-
-
-        logging.info(f"[{tool_name}]: Status: {status}")
-
-        # Check for success/completion
-        if status in ['completed', 'succeeded', 'completed_with_errors']:
-             any_scan_completed = True
-             logging.info(f"  Successfully processed outputs: {result.get('output_files', 'N/A')}")
-             if 'errors' in result: # Specific errors reported by API summary
-                 logging.warning(f"  Reported errors within task: {result['errors']}")
-             # If status is 'completed_with_errors', we might still proceed but log it.
+        api_source = result.get('api_source', 'unknown').upper()
+        # Identify tools from output_files keys if possible, otherwise use API source
+        tool_names_in_result = list(result.get('output_files', {}).keys())
+        task_description = f"{api_source} API Call"
+        if tool_names_in_result:
+             task_description += f" (Tools: {', '.join(tool_names_in_result)})"
         elif status == 'skipped':
-              logging.warning(f"  Scan skipped. Reason: {result.get('reason', 'Not specified')}")
+             task_description += f" (Reason: {result.get('reason', 'N/A')})"
+
+        logging.info(f"[{task_description}]: Status: {status}")
+
+        if status in ['completed', 'succeeded', 'completed_with_errors']:
+             # Check if there are actual output files generated
+             if result.get('output_files'):
+                  any_scan_completed_with_output = True
+                  # Add successfully generated files to the combined dictionary
+                  # This assumes tool names (keys) are unique across APIs
+                  all_output_files.update(result.get('output_files', {}))
+                  logging.info(f"  Successfully processed outputs: {list(result.get('output_files', {}).keys())}")
+             else:
+                  # Completed but no output files? Log warning.
+                  logging.warning(f"  Task reported completion but had no output files.")
+
+             # Log specific errors reported within the task (e.g., from summary parsing)
+             if 'errors' in result and result['errors']:
+                 logging.warning(f"  Reported errors within task: {result['errors']}")
+             # If status is 'completed_with_errors', we still proceed but log it.
+
+        elif status == 'skipped':
+              # Already logged reason in task_description
+              logging.info(f"  Task skipped.")
         else: # failure, error, config_error, timeout etc.
              logging.error(f"  Task Failed/Error. Message: {result.get('error', 'Unknown error')}")
-             any_scan_failed = True # Mark that at least one scan failed
+             any_scan_failed = True # Mark that at least one critical step failed
 
-    # --- Decide whether to proceed ---
+    # --- Decide whether to proceed to Parsing ---
     if any_scan_failed:
-        logging.error("One or more scan tasks failed or encountered errors. Aborting further processing.")
-        print("{\"status\": \"scan_failed\"}") # Output JSON status
-        return # Exit if critical scans failed
+        logging.error("One or more critical API scan tasks failed. Aborting further processing.")
+        print(json.dumps({"status": "scan_failed"}))
+        return
 
-    if not any_scan_completed:
-         logging.warning("No scan tasks completed successfully or produced results (might have been skipped or had config errors). Skipping parsing and combining.")
-         # Consider if this should be a 'success' or 'scan_failed'. Let's treat it as non-failure for now, maybe resulting in empty report.
-         print("{\"status\": \"no_scans_completed\"}")
+    # Check if we actually got any files to parse
+    if not any_scan_completed_with_output or not all_output_files:
+         logging.warning("No API scan tasks completed successfully or produced output files. Skipping parsing and combining.")
+         # Decide on final status: success (empty report) or failure?
+         # Let's create an empty report for consistency.
+         combiner_ok = run_combiner() # Run combiner to create empty report
+         if combiner_ok:
+             print(json.dumps({"status": "success", "report_path": FINAL_REPORT_PATH, "message": "No tools produced output."}))
+         else:
+              print(json.dumps({"status": "combining_failed", "error": "Failed to create empty final report."}))
          return
 
     # --- Run Parsers ---
-    logging.info("Proceeding to parsing stage.")
-    parsers_ok = run_parsers(scan_results) # Pass all results, parser will filter based on success/output_files
+    logging.info("Proceeding to parsing stage with collected files.")
+    parsers_ok = run_parsers(all_output_files) # Pass the combined dictionary
     if not parsers_ok:
         logging.error("Parsing failed. Skipping combining.")
-        print("{\"status\": \"parsing_failed\"}") # Output JSON status
-        return # Exit if parsing failed
+        print(json.dumps({"status": "parsing_failed"}))
+        return
 
-    # --- Run Combiner ---
+    # --- Run Combiner --- (No changes needed in the call)
     logging.info("Proceeding to combining stage.")
     combiner_ok = run_combiner()
     if not combiner_ok:
         logging.error("Combining failed.")
-        print("{\"status\": \"combining_failed\"}") # Output JSON status
-        return # Exit if combining failed
+        print(json.dumps({"status": "combining_failed"}))
+        return
 
     # --- Final Success ---
     logging.info("=== Processing Pipeline Completed Successfully ===")
-    # Check if the final report actually has content (combiner might create empty if no vulns)
     final_report_content = []
     try:
          if os.path.exists(FINAL_REPORT_PATH):
               with open(FINAL_REPORT_PATH, 'r') as f:
                   final_report_content = json.load(f)
-    except Exception:
-         logging.warning("Could not read final report content after creation.") # Not fatal
+    except Exception as e:
+         logging.warning(f"Could not read final report content after creation: {e}") # Not fatal
 
-    logging.info(f"Final report contains {len(final_report_content)} alerts.")
-    print(json.dumps({"status": "success", "report_path": FINAL_REPORT_PATH})) # Output JSON status
+    alert_count = len(final_report_content) if isinstance(final_report_content, list) else 0
+    logging.info(f"Final report contains {alert_count} alerts.")
+    print(json.dumps({"status": "success", "report_path": FINAL_REPORT_PATH}))
 
 
 # --- Command Line Execution ---
@@ -616,24 +686,28 @@ if __name__ == "__main__":
         options = json.loads(json_options_string)
         logging.info("Successfully parsed options JSON from command line.")
 
-        # Basic validation of options needed by main logic
+        # Basic validation
         if not isinstance(options.get("selected_tools"), dict):
              raise ValueError("Missing or invalid 'selected_tools' dictionary in options.")
-        # target_url checked within main() now
+        if not options.get("target_url"):
+             # Check target_url here before calling main
+             raise ValueError("Missing mandatory 'target_url' in options.")
 
         main(options) # Pass the dictionary directly
 
     except json.JSONDecodeError:
         logging.error("Error: Invalid JSON string provided as argument.")
-        print("{\"status\": \"invalid_json_input\"}")
+        print(json.dumps({"status": "invalid_json_input"}))
         sys.exit(1)
     except ValueError as ve: # Catch specific validation errors
          logging.error(f"Error: Invalid options provided: {ve}")
-         print(f"{{\"status\": \"invalid_options\", \"error\": \"{str(ve)}\"}}")
+         # Ensure error message is properly escaped for JSON
+         error_msg = str(ve).replace('"', '\\"')
+         print(json.dumps({"status": "invalid_options", "error": error_msg}))
          sys.exit(1)
     except Exception as e:
-        logging.exception("An unexpected error occurred during execution:") # Log full traceback
-        # Try to format error for JSON output, escaping quotes
-        error_str = str(e).replace('"', '\\"')
-        print(f"{{\"status\": \"runtime_error\", \"error\": \"{error_str}\"}}")
+        logging.exception("An unexpected error occurred during execution:")
+        # Ensure error message is properly escaped for JSON
+        error_msg = str(e).replace('"', '\\"')
+        print(json.dumps({"status": "runtime_error", "error": error_msg}))
         sys.exit(1)
