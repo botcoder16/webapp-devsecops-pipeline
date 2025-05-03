@@ -47,7 +47,7 @@ def parse_scan_results(file_path, output_path):
         json.dump(vulnerabilities, output_file, indent=4)
 
 # Example Usage
-file_path = "../scan_results/burp/burp_scan.json"
+file_path = "../scan_results/burp_scan.json"
 output_path = "../combine/vulnerabilities_burp.json"
 parse_scan_results(file_path, output_path)
 

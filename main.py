@@ -101,7 +101,7 @@ def run_ubuntu_api_scan(options):
     response = None
     try:
         # Use the correct URL and a reasonable timeout for these tools
-        response = requests.post(UBUNTU_API_URL, json=payload, headers={"Content-Type": "application/json"}, stream=True, timeout=600) # 10 min timeout
+        response = requests.post(UBUNTU_API_URL, json=payload, headers={"Content-Type": "application/json"}, stream=True) # 10 min timeout
         response.raise_for_status()
 
     except requests.exceptions.Timeout:

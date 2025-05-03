@@ -1,0 +1,9 @@
+{
+  "firewalls_detected": [
+    {
+      "firewall": "Generic",
+      "manufacturer": "Unknown",
+      "url": "http://testphp.vulnweb.com/"
+    }
+  ]
+}

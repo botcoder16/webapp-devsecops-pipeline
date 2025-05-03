@@ -4,17 +4,26 @@ import sys
 import os
 
 def nikto_vulnerabilities(input_file, output_file):
+    # Initialize the list to store vulnerabilities
+    vulnerabilities = []
 
     # Parse the XML file
     try:
         tree = ET.parse(input_file)
         root = tree.getroot()
+        # Check if the root has any item elements
+        if not root.findall(".//item"):
+            # If no items found, save empty JSON and return
+            with open(output_file, "w") as json_file:
+                json.dump(vulnerabilities, json_file, indent=4)
+            print(f"Empty or no vulnerabilities found. Saved to {output_file}")
+            return
     except Exception as e:
-        print(f"Error reading XML file: {e}")
+        # If XML is malformed or empty, save empty JSON and return
+        with open(output_file, "w") as json_file:
+            json.dump(vulnerabilities, json_file, indent=4)
+        print(f"Invalid or empty XML file. Saved empty JSON to {output_file}")
         return
-
-    # Initialize the list to store vulnerabilities
-    vulnerabilities = []
 
     # Iterate through each <item> element to extract vulnerability data
     for item in root.findall(".//item"):
@@ -40,7 +49,7 @@ def nikto_vulnerabilities(input_file, output_file):
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
-        print("Usage: python script_name.py input_file.json output_file.json")
+        print("Usage: python script_name.py input_file.xml output_file.json")
         sys.exit(1)
 
     input_path = sys.argv[1]
@@ -49,4 +58,4 @@ if __name__ == "__main__":
     if not os.path.exists(input_path):
         print(f"Input file does not exist: {input_path}")
         sys.exit(1)
-nikto_vulnerabilities(input_path, output_path)
+    nikto_vulnerabilities(input_path, output_path)

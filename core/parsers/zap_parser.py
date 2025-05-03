@@ -43,12 +43,12 @@ def simplify_security_scan(json_data):
 
 # Example usage:
 if __name__ == "__main__":
-    with open("../scan_results/zap/zap_scan.json", "r") as file:
+    with open("../scan_results/zap_scan.json", "r") as file:
         data = json.load(file)
     
     simplified_json = simplify_security_scan(data)
     
-    with open("../combine/vulnerabilities_zap.json", "w") as outfile:
+    with open("../combine/vulnerabilities/vulnerabilities_zap.json", "w") as outfile:
         json.dump(simplified_json, outfile, indent=4)
     
     print("Simplified JSON saved as vulnerabilities_zap.json")
