@@ -1,22 +1,7 @@
 {
-  "wapiti": {
-    "status": "skipped",
-    "reason": "Command not provided"
-  },
-  "nikto": {
-    "status": "skipped",
-    "reason": "Command not provided"
-  },
-  "wafw00f": {
-    "status": "skipped",
-    "reason": "Command not provided"
-  },
-  "whatweb": {
-    "status": "skipped",
-    "reason": "Command not provided"
-  },
-  "nuclei": {
-    "status": "nuclei scan completed successfully",
-    "output_file": "nuclei_scan.json"
-  }
+    "burp": {
+        "status": "failed",
+        "output_file": null,
+        "reason": "'burp_scan_config'"
+    }
 }
